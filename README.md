@@ -64,34 +64,37 @@ In this section, all major changes, additions, and deletions in the code are rec
   	* Added support for percussion instruments. When a percussion sign is detected, notes in the selected part will be converted to the Survivalcraft percussion instrument format (numbers 0 to 9). Instead of note values, the percussion instrument number will be displayed, taking into account the duration. The octave line will be absent as it is not used. Support for 28 instruments has been added, and for some of them, a similar instrument had to be selected by ear. Here are the names of the percussion instruments and their ordinal numbers in the Survivalcraft sound generator or equivalent:
 ```
 	{"Acoustic Bass Drum",1},
-        {"Bass Drum 1",1},
-        {"Side Stick",9}, //suitable 2,3
-        {"Acoustic Snare",0},
-        {"Electric Snare",0},
-        {"Low Floor Tom",5},
-        {"Closed Hi-Hat",2},
-        {"High Floor Tom",5},
-        {"Pedal Hi-Hat",3},
-        {"Low Tom",5},
-        {"Open Hi-Hat",8}, //it seems to be 4, but 8 is more suitable
-        {"Low-Mid Tom",6},
-        {"Hi-Mid Tom",6},
-        {"Crash Cymbal 1",7},
-        {"High Tom",6},
-        {"Ride Cymbal 1",8},
-        {"Chinese Cymbal",7},
-        {"Ride Bell",8},
-        {"Tambourine",3},
-        {"Splash Cymbal",4}, //suitable 4 and 7
-        {"Cowbell",3},
-        {"Crash Cymbal 2",7},
-        {"Ride Cymbal 2",8},
-        {"Open Hi Conga",6},
-        {"Low Conga",5},
-        {"Cabasa",3},
-        {"Castanets",2},
-        {"Hand Clap",9},
+	{"Bass Drum 1",1},
+	{"Side Stick",9}, //suitable 2,3
+	{"Acoustic Snare",0},
+	{"Electric Snare",0},
+	{"Low Floor Tom",5},
+	{"Closed Hi-Hat",2},
+	{"High Floor Tom",5},
+	{"Pedal Hi-Hat",3},
+	{"Low Tom",5},
+	{"Open Hi-Hat",8}, //it seems to be 4, but 8 is more suitable
+	{"Low-Mid Tom",6},
+	{"Hi-Mid Tom",6},
+	{"Crash Cymbal 1",7},
+	{"High Tom",6},
+	{"Ride Cymbal 1",8},
+	{"Chinese Cymbal",7},
+	{"Ride Bell",8},
+	{"Tambourine",3},
+	{"Splash Cymbal",4}, //suitable 4 and 7
+	{"Cowbell",3},
+	{"Crash Cymbal 2",7},
+	{"Ride Cymbal 2",8},
+	{"Open Hi Conga",6},
+	{"Low Conga",5},
+	{"Cabasa",3},
+	{"Castanets",2},
+	{"Hand Clap",9}
 ```
+* 1st October 2025
+	* The application interface has been updated, UI elements are now created through code, migrated to TortoiseGit, switched the compiler to MSVC 2017, added a separate window with an HTML page containing instructions on how to use the application, added support for opening compressed musicXML files using the miniz library, added icons in the application, saved the path of the last selected file, widgets settings, and menu bar elements to an ini file, and enabled automatic translation after file selection.
+
 ___
 # RU Survivalcraft Notes Translator 
 Survivalcraft Notes Translator - это программа, которая считывает файлы musicxml, извлекает найденные партии и голоса и переводит ноты и октавы из выбранного голоса в формат звукового генератора в Survivalcraft.
@@ -148,31 +151,35 @@ ___
   	* Добавлена поддержка ударных инструментов. При обнаружении знака перкуссии, ноты в выбранной партии будут преобразованы в формат ударных инструментов Survivalcraft (числа от 0 до 9). Вместо значений в виде нот будет выводиться номер ударного инструмента с учетом длительности. Строка с октавами будет отсутствовать, так как она не используется. Добавлена поддержка 28 инструментов, к некоторым из них приходилось подбирать похожий на слух инструмент. Вот название ударных и их порядковый номер в звуковом генераторе Survivalcraft или аналог:
 ```
 	{"Acoustic Bass Drum",1},
-        {"Bass Drum 1",1},
-        {"Side Stick",9}, //подходит 2,3
-        {"Acoustic Snare",0},
-        {"Electric Snare",0},
-        {"Low Floor Tom",5},
-        {"Closed Hi-Hat",2},
-        {"High Floor Tom",5},
-        {"Pedal Hi-Hat",3},
-        {"Low Tom",5},
-        {"Open Hi-Hat",8}, //вроде бы 4, но больше подходит 8
-        {"Low-Mid Tom",6},
-        {"Hi-Mid Tom",6},
-        {"Crash Cymbal 1",7},
-        {"High Tom",6},
-        {"Ride Cymbal 1",8},
-        {"Chinese Cymbal",7},
-        {"Ride Bell",8},
-        {"Tambourine",3},
-        {"Splash Cymbal",4}, //подходит 4 и 7
-        {"Cowbell",3},
-        {"Crash Cymbal 2",7},
-        {"Ride Cymbal 2",8},
-        {"Open Hi Conga",6},
-        {"Low Conga",5},
-        {"Cabasa",3},
-        {"Castanets",2},
-        {"Hand Clap",9},
+	{"Bass Drum 1",1},
+	{"Side Stick",9}, //подходит 2,3
+	{"Acoustic Snare",0},
+	{"Electric Snare",0},
+	{"Low Floor Tom",5},
+	{"Closed Hi-Hat",2},
+	{"High Floor Tom",5},
+	{"Pedal Hi-Hat",3},
+	{"Low Tom",5},
+	{"Open Hi-Hat",8}, //вроде бы 4, но больше подходит 8
+	{"Low-Mid Tom",6},
+	{"Hi-Mid Tom",6},
+	{"Crash Cymbal 1",7},
+	{"High Tom",6},
+	{"Ride Cymbal 1",8},
+	{"Chinese Cymbal",7},
+	{"Ride Bell",8},
+	{"Tambourine",3},
+	{"Splash Cymbal",4}, //подходит 4 и 7
+	{"Cowbell",3},
+	{"Crash Cymbal 2",7},
+	{"Ride Cymbal 2",8},
+	{"Open Hi Conga",6},
+	{"Low Conga",5},
+	{"Cabasa",3},
+	{"Castanets",2},
+	{"Hand Clap",9}
 ```
+* 01.10.25
+	* Обновлён интерфейс приложения, создание UI-элементов через код, переезд на TortoiseGit, смена компилятора на MSVC 2017, добавлено отдельное окно в виде HTML-страницы с инструкцией по использованию приложения, добавлена поддержка открытия сжатых musicXML-файлов с помощью библиотеки miniz, добавлены иконки в приложении, сохранение пути последнего выбранного файла, настроек виджетов и элементов меню (menu bar) в ini-файл, автоматический перевод после выбора файла.
+
+
