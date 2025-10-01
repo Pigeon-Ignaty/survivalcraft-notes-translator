@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>logo_console.png</file>
+        <file>logo_qt.ico</file>
+        <file>logo_main.png</file>
+    </qresource>
+</RCC>

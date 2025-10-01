@@ -8,26 +8,25 @@ QTextEditStream::~QTextEditStream() {
 
 std::streambuf::int_type QTextEditStream::overflow(std::streambuf::int_type v) {
     if (v == '\n') {
-        textEdit->append(buffer.c_str());
+        textEdit->append(QString::fromUtf8(buffer));  // Преобразуем в QString
         buffer.clear();
     } else {
-        buffer.push_back(v);
+        buffer.append(static_cast<char>(v));  // Заполняем UTF-8 строку
     }
     return v;
 }
 
 int QTextEditStream::sync() {
-    if (!buffer.empty()) {
-        textEdit->append(buffer.c_str());
+    if (!buffer.isEmpty()) {
+        textEdit->append(QString::fromUtf8(buffer));  // Преобразуем перед выводом
         buffer.clear();
     }
     return 0;
 }
 
-QTextEditStreamOutput::QTextEditStreamOutput(QTextEdit *textEdit) : textEditStream(textEdit) {
+QTextEditStreamOutput::QTextEditStreamOutput(QTextEdit *textEdit)
+    : std::ostream(nullptr), textEditStream(textEdit) {
     rdbuf(&textEditStream);
 }
 
-QTextEditStreamOutput::~QTextEditStreamOutput() {
-    // Not needed, as textEditStream will be destroyed automatically
-}
+QTextEditStreamOutput::~QTextEditStreamOutput() {}

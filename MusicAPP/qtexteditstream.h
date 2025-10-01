@@ -1,9 +1,10 @@
-#ifndef QTextEditStream_H
-#define QTextEditStream_H
+#ifndef QTEXTEDITSTREAM_H
+#define QTEXTEDITSTREAM_H
 
 #include <streambuf>
 #include <QTextEdit>
 #include <ostream>
+#include <QString>
 
 class QTextEditStream : public std::basic_streambuf<char> {
 public:
@@ -11,11 +12,11 @@ public:
     ~QTextEditStream();
 
 protected:
-    virtual int_type overflow(int_type v);
-    virtual int sync();
+    virtual int_type overflow(int_type v) override;
+    virtual int sync() override;
 
 private:
-    std::string buffer;
+    QByteArray buffer;  // Используем QByteArray для хранения UTF-8
     QTextEdit *textEdit;
 };
 
@@ -28,4 +29,4 @@ private:
     QTextEditStream textEditStream;
 };
 
-#endif // QTextEditStream_H
+#endif // QTEXTEDITSTREAM_H

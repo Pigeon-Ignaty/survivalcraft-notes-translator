@@ -1,10 +1,10 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2024-01-01T12:06:09
+# Project created by QtCreator 2024-12-01T11:19:06
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui webenginewidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,21 +27,41 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    tiny/tinyxml2.cpp \
+    about.cpp \
     debug.cpp \
-    qtexteditstream.cpp
+    helpdialog.cpp \
+    qtexteditstream.cpp \
+    libs/tiny/tinyxml2.cpp \
+    libs/miniz/miniz.c
+
 
 HEADERS += \
         mainwindow.h \
-    tiny/tinyxml2.h \
+    about.h \
     debug.h \
-    qtexteditstream.h
+    helpdialog.h \
+    qtexteditstream.h \
+    libs/tiny/tinyxml2.h \
+    libs/miniz/miniz.h
 
 FORMS += \
         mainwindow.ui \
-    debug.ui
+    about.ui \
+    debug.ui \
+    helpdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    files.qrc
+
+#INCLUDEPATH += $$PWD/libs/miniz
+#QMAKE_CXXFLAGS += miniz.c
+
+QMAKE_CXXFLAGS_MINIZ = -w  # Игнорировать все предупреждения для miniz.c
+QMAKE_CXXFLAGS += $$QMAKE_CXXFLAGS_MINIZ
+INCLUDEPATH += "C:/Program Files/OpenSSL-Win64/bin"
+QMAKE_CXXFLAGS += /utf-8
