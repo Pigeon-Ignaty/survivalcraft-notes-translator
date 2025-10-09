@@ -22,39 +22,38 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG += c++11
+CONFIG += c++17
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
-    about.cpp \
-    debug.cpp \
-    helpdialog.cpp \
-    qtexteditstream.cpp \
+    src/main.cpp \
+    src/mainwindow.cpp \
+    src/about.cpp \
+    src/debug.cpp \
+    src/helpdialog.cpp \
+    src/qtexteditstream.cpp \
     libs/tiny/tinyxml2.cpp \
     libs/miniz/miniz.c
 
 
 HEADERS += \
-        mainwindow.h \
-    about.h \
-    debug.h \
-    helpdialog.h \
-    qtexteditstream.h \
+    src/mainwindow.h \
+    src/about.h \
+    src/debug.h \
+    src/helpdialog.h \
+    src/qtexteditstream.h \
     libs/tiny/tinyxml2.h \
     libs/miniz/miniz.h
 
 FORMS += \
-        mainwindow.ui \
-    about.ui \
-    debug.ui \
-    helpdialog.ui
+        ui/mainwindow.ui \
+    ui/about.ui \
+    ui/debug.ui \
+    ui/helpdialog.ui
 
 guide.source = $$PWD/guide
 
 CONFIG(debug, debug|release) {
     guide.target = $$OUT_PWD/debug/guide
-    message(OUT_PWD/debug/guide = $$OUT_PWD/debug/guide)
 
 } else {
     guide.target = $$OUT_PWD/release/guide
@@ -74,12 +73,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    files.qrc
+    resources/files.qrc
 
 #INCLUDEPATH += $$PWD/libs/miniz
 #QMAKE_CXXFLAGS += miniz.c
 
 QMAKE_CXXFLAGS_MINIZ = -w  # Игнорировать все предупреждения для miniz.c
 QMAKE_CXXFLAGS += $$QMAKE_CXXFLAGS_MINIZ
-INCLUDEPATH += "C:/Program Files/OpenSSL-Win64/bin"
 QMAKE_CXXFLAGS += /utf-8
