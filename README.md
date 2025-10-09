@@ -94,7 +94,8 @@ In this section, all major changes, additions, and deletions in the code are rec
 ```
 * 1st October 2025
 	* The application interface has been updated, UI elements are now created through code, migrated to TortoiseGit, switched the compiler to MSVC 2017, added a separate window with an HTML page containing instructions on how to use the application, added support for opening compressed musicXML files using the miniz library, added icons in the application, saved the path of the last selected file, widgets settings, and menu bar elements to an ini file, and enabled automatic translation after file selection.
-
+* 9th October 2025
+	* Added translation version selection for versions before and after 2.4 via the menu. Translation for the bass guitar was added for the new version. A local HTML page was added to the help window. Minor code refactoring for better readability.
 ___
 # RU Survivalcraft Notes Translator 
 Survivalcraft Notes Translator - это программа, которая считывает файлы musicxml, извлекает найденные партии и голоса и переводит ноты и октавы из выбранного голоса в формат звукового генератора в Survivalcraft.
@@ -181,5 +182,5 @@ ___
 ```
 * 01.10.25
 	* Обновлён интерфейс приложения, создание UI-элементов через код, переезд на TortoiseGit, смена компилятора на MSVC 2017, добавлено отдельное окно в виде HTML-страницы с инструкцией по использованию приложения, добавлена поддержка открытия сжатых musicXML-файлов с помощью библиотеки miniz, добавлены иконки в приложении, сохранение пути последнего выбранного файла, настроек виджетов и элементов меню (menu bar) в ini-файл, автоматический перевод после выбора файла.
-
-
+* 09.10.25
+	* Добавлен выбор версии перевода для версий до 2.4 и после 2.4 через меню. Также для новой версии добавлен перевод бас-гитары. В окно руководства добавлена локальная HTML-страница. Небольшой рефакторинг кода для лучшей читаемости.
