@@ -50,6 +50,24 @@ FORMS += \
     debug.ui \
     helpdialog.ui
 
+guide.source = $$PWD/guide
+
+CONFIG(debug, debug|release) {
+    guide.target = $$OUT_PWD/debug/guide
+    message(OUT_PWD/debug/guide = $$OUT_PWD/debug/guide)
+
+} else {
+    guide.target = $$OUT_PWD/release/guide
+}
+
+win32 {
+    COPY_DIR = xcopy /E /I /Y
+    QMAKE_POST_LINK += $$COPY_DIR \"$$guide.source\" \"$$guide.target\" >NUL
+}
+
+WEBENGINE_CONFIG += use_proprietary_codecs
+
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

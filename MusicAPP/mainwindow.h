@@ -33,40 +33,63 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+    enum Instrument{
+        Bell = 1,
+        Organ = 2,
+        Ping = 3,
+        Strings = 4,
+        Trumpet = 5,
+        Voice = 6,
+        Piano = 7,
+        PianoLong = 8,
+        Drums = 9,
+        Bass = 10
+    };
+    enum NoteType{
+        Pitch = 0,
+        Octave = 1
+    };
+
+    struct OctaveRange {
+        int lowOctave;
+        int highOctave;
+        int offset;  //Для колокольчика до 2.4 - 1, для всех остальных 0
+    };
+
     //Октавы и инcтрументы до 2.4
-    const QMap<int/*номер инструмента*/, QPair<int/*мин октава*/,int/*макс октава*/>>
+    const QMap<Instrument/*номер инструмента*/, OctaveRange/*мин. октава, макс. октава, сдвиг*/>
     m_instrOctRangeOld{
-        {1,{3,4}},
-        {2,{3,5}},
-        {3,{3,5}},
-        {4,{2,4}},
-        {5,{2,4}},
-        {6,{3,5}},
-        {7,{2,5}},
-        {8,{2,5}}
+        {Bell,{3, 4, 1}},
+        {Organ,{3, 5, 0}},
+        {Ping,{3, 5, 0}},
+        {Strings,{2, 4, 0}},
+        {Trumpet,{2, 4, 0}},
+        {Voice,{3, 5, 0}},
+        {Piano,{2, 5, 0}},
+        {PianoLong,{2, 5, 0}}
     };
 
     //Октавы и интрументы после 2.4
-    const QMap<int/*номер инструмента*/, QPair<int/*мин октава*/,int/*макс октава*/>>
+    const QMap<Instrument/*номер инструмента*/, OctaveRange/*мин. октава, макс. октава, сдвиг*/>
     m_instrOctRangeNew{
-        {1,{2,5}},
-        {2,{3,5}},
-        {3,{3,6}},
-        {4,{2,5}},
-        {5,{2,5}},
-        {6,{3,6}},
-        {7,{2,5}},
-        {8,{2,5}},
-        {10,{2,5}},
+        {Bell,{2, 5, 0}},
+        {Organ,{3, 5, 0}},
+        {Ping,{3, 6, 0}},
+        {Strings,{2, 5, 0}},
+        {Trumpet,{2, 5, 0}},
+        {Voice,{3, 6, 0}},
+        {Piano,{2, 5, 0}},
+        {PianoLong,{2, 5, 0}},
+        {Bass,{2, 5, 0}},
     };
-    QMap<int, QPair<int,int>> m_instrOctRangeCurrent;
+    QMap<Instrument, OctaveRange> m_instrOctRangeCurrent;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 private:
     void setupUi();// Собираем UI
-    void initializeSettings(); //чтение ini
+    void initializeSettings(); //чтение ini настроек
 public slots:
 
     void slotOpenMenuConsole(bool checked);//Окно создание/скрытия или открытия окна консоли
@@ -191,7 +214,6 @@ private:
     QVector <int> converted_notes_sequence;
     QVector <int> converted_octaves;
     QVector <int> converted_octaves_sequence;
-    void type_instrument(int instrument); //фун-ция для определения верхней и нижней границы октав
 
     map<string, string> PercussionPartInstruments; //запись id инструмента и его названия из партии
     int count_measure = 1; //счётчик тактов с 1
@@ -222,7 +244,7 @@ private:
     int fullTranslate(); // функция, которая вызывает другие функции для перевода нот
     void notes_f(QVector<char>& notes, QVector<int>& semitone, int chromatic);
     void octaves_f(QVector<int>& converted_notes, QVector<string>& octaves, int instrument);
-    void convert_to_sequence(QVector<int>&, QVector<float>&, QVector<int>&, int t);//вывод послед нот и октав
+    void convertToSequence(QVector<int>&, QVector<float>&, QVector<int>&, NoteType type);//вывод послед нот и октав
     void convert_to_sequence_percussion(QVector <string>&, QVector<float>&);
     void show_information_about_composition(QVector<float>& duration, int fraction_numerator, int denominator_fraction, int bpm);
     void show_notes(QVector <int>& converted_notes);

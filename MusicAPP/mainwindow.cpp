@@ -108,7 +108,6 @@ void MainWindow::slotOpenFile() //открытие файла
     m_comboVoiceSelection->blockSignals(false);
     m_checkInstrumentString->blockSignals(false);
     slotComboBoxPartsIndexChanged(m_comboPartySelection->currentIndex());
-
 }
 
 void MainWindow::slotOpenMenuConsole(bool checked)
@@ -202,6 +201,8 @@ void MainWindow::slotCloseFile()//закрытие через menu bar
 
 void MainWindow::slotComboBoxPartsIndexChanged(int index) //если был выбрана какая-то партия, то вывести для неё все голоса
 {
+    if(IdParts.isEmpty())
+        return;
     m_comboVoiceSelection->blockSignals(true);
     m_comboVoiceSelection->clear();
     m_comboVoiceSelection->blockSignals(false);
@@ -264,6 +265,8 @@ void MainWindow::slotComboBoxVoicesIndexChanged(const QString &arg1) //если 
     v_duration.clear();
     v_instruments.clear();
     m_translatedArea->clear();
+    if(IdParts.isEmpty())
+        return;
     QByteArray byteArray = IdParts[m_comboPartySelection->currentIndex()].toUtf8(); //перевод в const char*
     const char* NamePart = byteArray.constData();
     XMLElement* pRootElement = doc.RootElement(); // корневой каталог
@@ -565,26 +568,27 @@ void MainWindow::slotComboBoxInstrumentsIndexChanged(int index) //вызов ф�
 
 int MainWindow::fullTranslate()
 {
-    int instrument = m_comboInstrumentSelection->currentData().toInt();//Текущий инструмент
-         notes_f(v_notes, v_semitone, chromatic);//перевод из нот CDEFGAB в hex представление в survivalcraft
-         octaves_f(converted_notes, v_octaves, instrument); //перевод октавы в формат survivalcraft, в том числе обрезка по октавам
-         //calculation_duration(minimal_duration);//пока заморожено
-         if (sign != "percussion") {//если не ударные
-             convert_to_sequence(converted_notes, v_duration, v_league, 0);// перевод в последовательность нот в зависимости от длительности
-             convert_to_sequence(converted_octaves, v_duration, v_league, 1);//перевод в последовательность октав в зависимости от длительности
-             //show_information_about_composition(v_duration, beats, beat_type, bpm);//рекомендуемая частота генератора, не работает правильно
-             show_notes(converted_notes_sequence); //вывод нот с делением на строки длиной 256 символов
-             show_octaves(converted_octaves_sequence);//вывод октав с делением на строки длиной 256 символов
-             show_instruments();
-             show_volumes(); //вывод громкости
-         }
-         else { //ударные
-             convert_to_sequence_percussion(v_instruments, v_duration);
-             show_notes(converted_notes_sequence); //вывод нот с делением на строки длиной 256 символов
-             show_instruments();
-             show_volumes(); //вывод громкости
-         }
-         return 0;
+    int instrument = m_comboInstrumentSelection->currentData().toInt();//Текущий выбранный инструмент
+
+     notes_f(v_notes, v_semitone, chromatic);//перевод из нот CDEFGAB в hex представление в survivalcraft
+     octaves_f(converted_notes, v_octaves, instrument); //перевод октавы в формат survivalcraft, в том числе обрезка по октавам
+     //calculation_duration(minimal_duration);//пока заморожено
+     if (sign != "percussion") {//если не ударные
+         convertToSequence(converted_notes, v_duration, v_league, NoteType::Pitch);// перевод в последовательность нот в зависимости от длительности
+         convertToSequence(converted_octaves, v_duration, v_league, NoteType::Octave);//перевод в последовательность октав в зависимости от длительности
+         //show_information_about_composition(v_duration, beats, beat_type, bpm);//рекомендуемая частота генератора, не работает правильно
+         show_notes(converted_notes_sequence); //вывод нот с делением на строки длиной 256 символов
+         show_octaves(converted_octaves_sequence);//вывод октав с делением на строки длиной 256 символов
+         show_instruments();
+         show_volumes(); //вывод громкости
+     }
+     else { //ударные
+         convert_to_sequence_percussion(v_instruments, v_duration);
+         show_notes(converted_notes_sequence); //вывод нот с делением на строки длиной 256 символов
+         show_instruments();
+         show_volumes(); //вывод громкости
+     }
+     return 0;
 }
 
 void MainWindow::notes_f(QVector<char> &notes, QVector<int> &semitone, int chromatic)
@@ -610,47 +614,39 @@ void MainWindow::notes_f(QVector<char> &notes, QVector<int> &semitone, int chrom
 
 void MainWindow::octaves_f(QVector<int> &converted_notes, QVector<string> &octaves, int instrument)
 {
-    type_instrument(instrument);
+    Instrument instr = static_cast<Instrument>(instrument);
+    const int lowOctave = m_instrOctRangeCurrent.value(instr).lowOctave;
+    const int highOctave = m_instrOctRangeCurrent.value(instr).highOctave;
+    const int offset = m_instrOctRangeCurrent.value(instr).offset;
 
-         for (int i = 0; i < octaves.size(); i++) {
-             int number = 0;
-             if (octaves[i] == "n") {
-                 converted_octaves.push_back(15);
-             }
-             else {
-                 try {
-                     number = stoi(octaves[i]);
-                     if (number == 3) {
-                         int l = 0;
-                     }
-                     if (number > high_octave && converted_notes[i] == 0) {
-                         number = high_octave + 1;//high_octave + 1;
-                     }
-                     else {
-                         if (number < low_octave) {
-                             number = low_octave;
-                         }
-                         else if (number > high_octave) {
-                             number = high_octave;
-                         }
-                     }
-                     if (instrument == 1) {//если колокольчик, то сдигаем на октаву вверх, чтобы пропусть ломаную октаву
-                         converted_octaves.push_back(number - low_octave + 1);
+    for (int i = 0; i < octaves.size(); i++) {
 
-                     }
-                     else {
-                         converted_octaves.push_back(number - low_octave);
+        if (octaves[i] == "n") {
+            converted_octaves.push_back(15);
+        }
+        else {
+            try {
+                int number = 0;
+                number = stoi(octaves[i]);
 
-                     }
-
-                 }
-                 catch (const exception& ex) {
-                     *sout << ex.what() << endl;
-                 }
-             }
-
-
-         }
+                if (number > highOctave && converted_notes[i] == 0) {
+                    number = highOctave + 1;
+                }
+                else {
+                    if (number < lowOctave) {
+                        number = lowOctave;
+                    }
+                    else if (number > highOctave) {
+                        number = highOctave;
+                    }
+                }
+                    converted_octaves.push_back(number - lowOctave + offset);
+            }
+            catch (const exception& ex) {
+                *sout << ex.what() << endl;
+            }
+        }
+    }
 }
 
 int MainWindow::switch_hex_notes(char ch, int semitone) {
@@ -663,27 +659,6 @@ int MainWindow::switch_hex_notes(char ch, int semitone) {
     case 'A': return 9 + semitone; //ля
     case 'B': return 11 + semitone;//си
     default: return 15; //пауза
-    }
-}
-
-void MainWindow::type_instrument(int instrument)
-{
-    if (instrument == 1) { // колокольчик - сломана 2 октава
-        high_octave = 4;
-        low_octave = 3;
-    }
-    if (instrument == 2|| instrument == 3 || instrument == 6) { // орган, 8 бит, вокальное ду
-        high_octave = 5;
-        low_octave = 3;
-    }
-    else if (instrument == 4 || instrument == 5) {//струнный инструмент, труба
-        high_octave = 4;
-        low_octave = 2;
-    }
-
-    else if (instrument == 7 || instrument == 8) {//оба пианино
-        high_octave = 5;
-        low_octave = 2;
     }
 }
 
@@ -866,7 +841,7 @@ void MainWindow::setupUi()
 
     m_consoleAction = new QAction("Отладочная информация", this);
 
-    m_versionMenu = new QMenu("Версия", this);    
+    m_versionMenu = new QMenu("Версия", this);
     m_versionBefore24SubAction = new QAction("До 2.4 (устаревшая)", this);
     m_versionAfter24SubAction = new QAction("После 2.4 (включая)", this);
     QActionGroup *versionGroup = new QActionGroup(this);
@@ -913,8 +888,8 @@ void MainWindow::setupUi()
     connect(m_versionAfter24SubAction, &QAction::triggered, this, &MainWindow::slotChangedVersion);
     connect(m_versionBefore24SubAction, &QAction::triggered, this, &MainWindow::slotChangedVersion);
 
-    m_versionAfter24SubAction->setChecked(true); //По умолчанию перевод на новую версию
-    m_versionBefore24SubAction->setChecked(false);
+    m_versionAfter24SubAction->setChecked(false); //По умолчанию перевод на новую версию
+    m_versionBefore24SubAction->setChecked(true);
     slotChangedVersion();
 
     //Подключения Action в Справка
@@ -925,14 +900,13 @@ void MainWindow::setupUi()
     connect(m_checkVolumeString, &QCheckBox::toggled, this, &MainWindow::slotDisplayVolumeString);
     connect(m_checkInstrumentString, &QCheckBox::toggled, this, &MainWindow::slotDisplayInstrumentString);
 
-    //Смена партии, гро
+    //Смена партии, голоса и инструмента
     connect(m_comboPartySelection, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::slotComboBoxPartsIndexChanged);
     connect(m_comboVoiceSelection, QOverload<const QString &>::of(&QComboBox::currentIndexChanged), this, &MainWindow::slotComboBoxVoicesIndexChanged);
     connect(m_comboInstrumentSelection, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::slotComboBoxInstrumentsIndexChanged);
-
 }
 
-void MainWindow::convert_to_sequence(QVector<int>& converted, QVector<float>& duration, QVector<int>& league, int t)
+void MainWindow::convertToSequence(QVector<int>& converted, QVector<float>& duration, QVector<int>& league, NoteType type)
 {
     if (converted.size() != duration.size()) {
         *sout << "Error: vectors have different sizes" << endl;
@@ -940,12 +914,12 @@ void MainWindow::convert_to_sequence(QVector<int>& converted, QVector<float>& du
 
 
     try {
-        if (!t) {//если ноты
+        if (type == NoteType::Pitch) {//если ноты
             for (int i = 0; i < duration.size(); i++) {
                 (print_amount(converted[i], duration[i], league[i], converted_notes_sequence));
             }
         }
-        else { // если октавы
+        else if(type == NoteType::Octave){ // если октавы
             for (int i = 0; i < duration.size(); i++) {
                 (print_amount(converted[i], duration[i], league[i], converted_octaves_sequence));
             }
@@ -988,7 +962,7 @@ void MainWindow::initializeSettings()
     m_checkInstrumentString->setEnabled(false);
     m_checkVolumeString->setEnabled(false);
     m_comboInstrumentSelection->blockSignals(true);
-    m_comboInstrumentSelection->setCurrentIndex(6); // по умолчанию инструмент 7
+    m_comboInstrumentSelection->setCurrentIndex(6 + (m_versionAfter24SubAction->isChecked() ? 1 : 0)); // по умолчанию пианино
     m_comboPartySelection->blockSignals(true);//отключаем слот изменения содержимого выпадающего списка
     m_comboVoiceSelection->blockSignals(true);//отключаем слот изменения содержимого выпадающего списка
     setWindowTitle(tr("MusicAPP translator:"));//название окна при запуске
@@ -1013,7 +987,7 @@ void MainWindow::initializeSettings()
                    settings.setValue("CheckBoxInstrument", true);
                    *sout << "CheckBoxInstrument сброшен." << endl;
                }
-               if (!settings.contains("ComboBoxInstruments")) {
+               if (!settings.contains("ComboBoxInstruments") || settings.value("ComboBoxInstruments").toInt() < 0) {
                    settings.setValue("ComboBoxInstruments", 6);
                    *sout << "ComboBoxInstruments сброшен." << endl;
                }
@@ -1139,13 +1113,13 @@ void MainWindow::show_instruments()
             }
             *sout << hex << uppercase << i;
             m_translatedArea->moveCursor(QTextCursor::End);
-            m_translatedArea->insertPlainText(QString::number(m_comboInstrumentSelection->currentIndex()+1));
+            m_translatedArea->insertPlainText(QString::number(m_comboInstrumentSelection->currentData().toInt(),16).toUpper());
             count++;
         }
         while (count != 256) {
             *sout << "F";
             m_translatedArea->moveCursor(QTextCursor::End);
-            m_translatedArea->insertPlainText(QString::number(m_comboInstrumentSelection->currentIndex()+1));
+            m_translatedArea->insertPlainText(QString::number(m_comboInstrumentSelection->currentData().toInt(),16).toUpper());
             count++;
         }
         *sout << endl;
@@ -1227,7 +1201,7 @@ void MainWindow::slotOpenGuideWindow() {
 
 void MainWindow::slotChangedVersion()
 {
-    QStringList oldInstruments  = {"1. Колокольчик (сломана октава, см. руководство)",
+    const QStringList oldInstruments  = {"1. Колокольчик (сломана октава, см. руководство)",
                                    "2. Óрган",
                                    "3. 8 бит",
                                    "4. Струнный инструмент",
@@ -1242,14 +1216,20 @@ void MainWindow::slotChangedVersion()
     for(const auto &instrument : oldInstruments)
         m_comboInstrumentSelection->addItem(instrument,i++);
 
-//    if(m_versionAfter24SubAction->isChecked()){//Если версия после 2.4, добавляем один инструмент
-//        m_comboInstrumentSelection->addItem("10. Бас-гитара",10);
-//        m_instrOctRangeCurrent = m_instrOctRangeNew;
-//    }
-//    else
-//        m_instrOctRangeCurrent = m_instrOctRangeOld;
+        if(m_versionAfter24SubAction->isChecked()){//Если версия после 2.4, добавляем один инструмент
+        m_comboInstrumentSelection->addItem("10. Бас-гитара",10);
+        m_instrOctRangeCurrent = m_instrOctRangeNew;
+    }
+    else
+        m_instrOctRangeCurrent = m_instrOctRangeOld;
 
-    m_comboInstrumentSelection->blockSignals(true);
+    m_comboInstrumentSelection->blockSignals(false);
+
+    const int index = m_comboPartySelection->currentIndex();
+    //slotComboBoxPartsIndexChanged(-1);
+    slotComboBoxPartsIndexChanged(index);
+
+
 }
 void MainWindow::handleHelpDialogClosed() {
     // Обработка закрытия окна
