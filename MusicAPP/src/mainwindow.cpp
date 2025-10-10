@@ -1,12 +1,9 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 #include <QMenu>
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent)
 {
-    //ui->setupUi(this);
     setupUi();
     initializeSettings();
 }
@@ -14,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete ui;
     if (help != nullptr) {
             delete help;
         }

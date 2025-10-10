@@ -9,6 +9,7 @@
 #include <QWebEngineProfile>
 #include <QWebEngineFullScreenRequest>
 #include <QWebEngineView>
+#include <QDir>
 HelpDialog::HelpDialog(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::HelpDialog)
@@ -17,10 +18,10 @@ HelpDialog::HelpDialog(QWidget *parent) :
     this->setWindowIcon(QIcon(":/pigeon.jpg"));
     // html страница на wp
     QWebEngineSettings::defaultSettings()->setAttribute(
-        QWebEngineSettings::LocalContentCanAccessRemoteUrls, true);
-
-    QString path = QCoreApplication::applicationDirPath() + "/guide/index.html";
+        QWebEngineSettings::LocalContentCanAccessFileUrls, true);
+    QString path = QDir(QCoreApplication::applicationDirPath()).filePath("guide/index.html");
     ui->widget->setUrl(QUrl::fromLocalFile(path));
+
 }
 HelpDialog::~HelpDialog()
 {

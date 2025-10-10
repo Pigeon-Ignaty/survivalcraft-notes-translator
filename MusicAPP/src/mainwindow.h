@@ -1,8 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include <QMainWindow>
-#include "libs/tiny/tinyxml2.h"
-#include "libs/miniz/miniz.h"
+#include "tinyxml2.h"
+#include "miniz.h"
 #include <QString>
 #include <QFile>
 #include "QFileDialog"
@@ -23,6 +23,8 @@
 #include <QVBoxLayout>
 #include <QCheckBox>
 #include <QLabel>
+#include <QCoreApplication>
+#include <QMenuBar>
 using namespace std;
 using namespace tinyxml2;
 
@@ -168,7 +170,6 @@ private:
     Debug *console;//окно консоли
     HelpDialog *help = nullptr; // окно справки
     About* aboutWindow = nullptr; //окно о программе
-    Ui::MainWindow *ui;
 
     //данные из класса  MusicXMLReader
     XMLDocument doc; // объект класса XML
