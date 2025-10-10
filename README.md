@@ -96,7 +96,9 @@ In this section, all major changes, additions, and deletions in the code are rec
 	* The application interface has been updated, UI elements are now created through code, migrated to TortoiseGit, switched the compiler to MSVC 2017, added a separate window with an HTML page containing instructions on how to use the application, added support for opening compressed musicXML files using the miniz library, added icons in the application, saved the path of the last selected file, widgets settings, and menu bar elements to an ini file, and enabled automatic translation after file selection.
 * 9th October 2025
 	* Added translation version selection for versions before and after 2.4 via the menu. Translation for the bass guitar was added for the new version. A local HTML page was added to the help window. Minor code refactoring for better readability.
- 	* The project structure has been updated: the necessary types have been moved to folders for source files (src), interfaces (ui), and resources (qrc). 
+ 	* The project structure has been updated: the necessary types have been moved to folders for source files (src), interfaces (ui), and resources (qrc).
+* 10th October 2025
+    * Migration of the project from qmake to CMake. The miniz library is built separately because it is quite picky and written in C. The mainwindow.ui file has been removed from the project.
 ___
 # RU Survivalcraft Notes Translator 
 Survivalcraft Notes Translator - это программа, которая считывает файлы musicxml, извлекает найденные партии и голоса и переводит ноты и октавы из выбранного голоса в формат звукового генератора в Survivalcraft.
@@ -186,3 +188,5 @@ ___
 * 09.10.25
 	* Добавлен выбор версии перевода для версий до 2.4 и после 2.4 через меню. Также для новой версии добавлен перевод бас-гитары. В окно руководства добавлена локальная HTML-страница. Небольшой рефакторинг кода для лучшей читаемости.
  	* Обновлена структура проекта: нужные типы перенесены в папки с исходниками (src), интерфейсами (ui) и ресурсами (qrc).
+* 10.10.25
+	* Переезд проекта с qmake на CMake. Библиотека miniz собирается отдельно, так как слишком капризничает и написана на C. Убран файл mainwindow.ui из проекта.
