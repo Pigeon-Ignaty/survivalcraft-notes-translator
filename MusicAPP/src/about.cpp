@@ -1,10 +1,12 @@
 #include "about.h"
-#include "ui_about.h"
 #include <qpixmap.h>
 #include <QPushButton>
 #include <QDialog>
 #include <QLibrary>
 #include <QDir>
+
+#define HELP_VERSION "1.0.0"
+
 //Фун-я получения версии dll справки
 using GetHelpVersion = const char* (*)();
 
@@ -41,7 +43,7 @@ About::About(QWidget *parent) : QDialog(parent)
     title->setMaximumWidth(460);
 
     auto appVersion = new QLabel(this);
-    appVersion->setText(tr("Версия приложения: 1.0.0"));
+    appVersion->setText(tr("Версия приложения: %1").arg(QString::fromUtf8(HELP_VERSION)));
 
     QString helpVersion = getHelpVersion();
     QString text;
@@ -93,15 +95,17 @@ About::About(QWidget *parent) : QDialog(parent)
 
     auto logo = new QLabel;
     QPixmap pix(":/logo_main.png");
-    logo->setPixmap(pix.scaled(200, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    logo->setPixmap(pix.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     logo->setAlignment(Qt::AlignCenter);
     layoutLogo->addWidget(logo);
+    layoutLogo->addStretch();
     auto mainLayout = new QHBoxLayout;
     mainLayout->addLayout(layoutLogo);
     mainLayout->addLayout(layoutWithText);
 
     setLayout(mainLayout);
-    setFixedSize(700, 380);
+    adjustSize();
+    setFixedSize(size());
 }
 
 About::~About()

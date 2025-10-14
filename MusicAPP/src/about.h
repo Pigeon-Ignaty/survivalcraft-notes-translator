@@ -2,7 +2,10 @@
 #define ABOUT_H
 
 #include <QDialog>
-#include <QCloseEvent>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QCoreApplication>
 
 class About : public QDialog
 {
