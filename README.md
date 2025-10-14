@@ -99,6 +99,8 @@ In this section, all major changes, additions, and deletions in the code are rec
  	* The project structure has been updated: the necessary types have been moved to folders for source files (src), interfaces (ui), and resources (qrc).
 * 10th October 2025
     * Migration of the project from qmake to CMake. The miniz library is built separately because it is quite picky and written in C. The mainwindow.ui file has been removed from the project.
+* 14th October 2025
+    * 14.10.25 — The help system has been moved to a separate DLL library. During download, users will be able to choose whether to include the help or not. Help files must be placed next to the executable file or kept in the guide folder. The "About" window is now created programmatically, and the UI file has been removed. This window displays the current application version and the DLL version (if present). If the library is missing, a placeholder is shown.
 ___
 # RU Survivalcraft Notes Translator 
 Survivalcraft Notes Translator - это программа, которая считывает файлы musicxml, извлекает найденные партии и голоса и переводит ноты и октавы из выбранного голоса в формат звукового генератора в Survivalcraft.
@@ -190,3 +192,5 @@ ___
  	* Обновлена структура проекта: нужные типы перенесены в папки с исходниками (src), интерфейсами (ui) и ресурсами (qrc).
 * 10.10.25
 	* Переезд проекта с qmake на CMake. Библиотека miniz собирается отдельно, так как слишком капризничает и написана на C. Убран файл mainwindow.ui из проекта.
+* 14.10.25
+	* Справка вынесена в отдельную dll-библиотеку. При скачивании можно будет выбрать: с загруженной справкой или без неё. Файлы справки необходимо разместить рядом с исполняемым файлом, либо оставить в папке guide. Окно "О программе" теперь создаётся через код — ui-файл удалён. В этом окне отображаются версия текущей программы и версия dll-библиотеки (если она присутствует). При отсутствии библиотеки отображается заглушка.
