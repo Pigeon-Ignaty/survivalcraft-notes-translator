@@ -17,7 +17,6 @@
 #include "about.h"
 #include <QSettings>
 #include <QDebug>
-#include "helpdialog.h"
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -25,8 +24,13 @@
 #include <QLabel>
 #include <QCoreApplication>
 #include <QMenuBar>
+#include <QLibrary>
+
 using namespace std;
 using namespace tinyxml2;
+
+//Фун-я вызова окна справки
+using  CreateHelpWidget = QWidget* (*)(QWidget* parent);
 
 namespace Ui {
 class MainWindow;
@@ -92,6 +96,7 @@ public:
 private:
     void setupUi();// Собираем UI
     void initializeSettings(); //чтение ini настроек
+    void loadHelpLibrary(); //Ф-я чтения dll
 public slots:
 
     void slotOpenMenuConsole(bool checked);//Окно создание/скрытия или открытия окна консоли
@@ -111,13 +116,12 @@ public slots:
 
     void slotAboutApplication();
 
-    void slotOpenGuideWindow(); //слот закрытия окна справки
+    void slotOpenHelpWindow(); //слот закрытия окна справки
 
     void slotChangedVersion();
 
 public slots:
     void SlotConsoleClose();
-    void handleHelpDialogClosed();     // Слот для обработки закрытия окна справки
 protected:
     void closeEvent(QCloseEvent *event) override;
 
@@ -168,8 +172,10 @@ private:
 
     QTextEditStreamOutput *sout; // Объявление объекта outputStream
     Debug *console;//окно консоли
-    HelpDialog *help = nullptr; // окно справки
     About* aboutWindow = nullptr; //окно о программе
+
+    QLibrary helpLib;//Библиотека справки
+    QWidget *m_helpWidget = nullptr; //окно справки
 
     //данные из класса  MusicXMLReader
     XMLDocument doc; // объект класса XML

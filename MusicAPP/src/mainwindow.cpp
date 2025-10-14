@@ -6,14 +6,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setupUi();
     initializeSettings();
+    loadHelpLibrary();
 }
 
 
 MainWindow::~MainWindow()
 {
-    if (help != nullptr) {
-            delete help;
-        }
+
 }
 
 void MainWindow::slotOpenFile() //открытие файла
@@ -884,12 +883,12 @@ void MainWindow::setupUi()
     connect(m_versionAfter24SubAction, &QAction::triggered, this, &MainWindow::slotChangedVersion);
     connect(m_versionBefore24SubAction, &QAction::triggered, this, &MainWindow::slotChangedVersion);
 
-    m_versionAfter24SubAction->setChecked(false); //По умолчанию перевод на новую версию
-    m_versionBefore24SubAction->setChecked(true);
+    m_versionAfter24SubAction->setChecked(true); //По умолчанию перевод на новую версию
+    m_versionBefore24SubAction->setChecked(false);
     slotChangedVersion();
 
     //Подключения Action в Справка
-    connect(m_helpAction, &QAction::triggered, this, &MainWindow::slotOpenGuideWindow);
+    connect(m_helpAction, &QAction::triggered, this, &MainWindow::slotOpenHelpWindow);
     connect(m_aboutApplicationAction, &QAction::triggered, this, &MainWindow::slotAboutApplication);
     connect(m_aboutQtAction, &QAction::triggered, this, &MainWindow::slotOpenAboutQT);
     //Подключение QCheckBox
@@ -972,7 +971,7 @@ void MainWindow::initializeSettings()
                // Попытка восстановления геометрии
                QByteArray geometry = settings.value("myWidget/geometry").toByteArray();
                if (!geometry.isEmpty() && restoreGeometry(geometry)) {
-                   *sout << u8"Успешное восстановление геометрии" << endl;
+                   *sout << "Успешное восстановление геометрии" << endl;
                    }
                }
                if (!settings.contains("CheckBoxVolume")) {
@@ -1017,6 +1016,44 @@ void MainWindow::initializeSettings()
             m_consoleAction->blockSignals(false);
             m_comboInstrumentSelection->blockSignals(false);
 
+}
+
+void MainWindow::loadHelpLibrary()
+{
+    QString oldPath = QDir::currentPath();
+
+    helpLib.setFileName("Help");
+    //Ищем библиотку рядом с exe и в папке guide
+    if (!helpLib.load()) {
+        *sout << "Библиотека справки не найдена по основному пути!\n";
+
+        QString libFullPath = QCoreApplication::applicationDirPath() + "/guide/help.dll";
+        QFileInfo libInfo(libFullPath);
+
+        if (libInfo.exists()) {
+            QDir::setCurrent(libInfo.absolutePath());
+            helpLib.setFileName("Help");
+
+            if (!helpLib.load()) {
+                *sout << "Библиотека справки не найдена по резервному пути!\n";
+                QDir::setCurrent(oldPath);
+                return;
+            }
+        }
+    }
+
+    CreateHelpWidget createHelpWidget = (CreateHelpWidget)helpLib.resolve("createHelpWidget");
+
+    if (!createHelpWidget) {
+        *sout << "Не удалось найти функцию createHelpWidget в библиотеке!\n";
+        helpLib.unload();
+        QDir::setCurrent(oldPath);
+        return;
+    }
+
+    m_helpWidget = createHelpWidget(this);
+
+    QDir::setCurrent(oldPath); // восстановление рабочей директории
 }
 
 void MainWindow::show_notes(QVector<int> &converted_notes)
@@ -1162,10 +1199,8 @@ void MainWindow::slotDisplayInstrumentString(int arg1)
 
 void MainWindow::slotAboutApplication()
 {
-
-    aboutWindow = new About(nullptr);
-    aboutWindow->setWindowTitle("О программе");
-    aboutWindow->show();
+    About about(this);
+    about.exec();
 }
 
 void MainWindow::slotDisplayVolumeString(int arg1)
@@ -1173,26 +1208,21 @@ void MainWindow::slotDisplayVolumeString(int arg1)
     slotComboBoxPartsIndexChanged(m_comboPartySelection->currentIndex());
 }
 
-void MainWindow::slotOpenGuideWindow() {
-    if (help == nullptr) {
-        // Создаем окно справки без родительского виджета
-        help = new HelpDialog(nullptr);
-        help->setWindowTitle("Справка");
-
-        // Подключаем сигнал destroyed, чтобы обнулить указатель при закрытии окна
-        connect(help, &HelpDialog::destroyed, this, [this]() {
-            help = nullptr;
-        });
-
-        // Подключаем сигнал закрытия, если требуется
-        connect(help, &HelpDialog::closed, this, &MainWindow::handleHelpDialogClosed);
-
-        help->show();
-    } else {
-        // Если окно уже существует, активируем его
-        help->raise();
-        help->activateWindow();
+void MainWindow::slotOpenHelpWindow() {
+    //Если нет dll, то показываем заглушку
+    if(!m_helpWidget){
+        QMessageBox warning;
+        warning.setIcon(QMessageBox::Warning);
+        warning.setWindowTitle(tr("Предупреждение"));
+        warning.setText("Не удалось загрузить справку! Скорее всего она не была скачана.<br>"
+                        "Посетите <a href=\"https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/releases\">страницу релизов</a>.");
+        warning.setTextInteractionFlags(Qt::TextBrowserInteraction);
+        warning.setWindowIcon(QIcon(":/pigeon.jpg"));
+        warning.exec();
+        return;
     }
+    //Иначе показываем справку
+    m_helpWidget->show();
 }
 
 void MainWindow::slotChangedVersion()
@@ -1226,8 +1256,4 @@ void MainWindow::slotChangedVersion()
     slotComboBoxPartsIndexChanged(index);
 
 
-}
-void MainWindow::handleHelpDialogClosed() {
-    // Обработка закрытия окна
-    help = nullptr;
 }

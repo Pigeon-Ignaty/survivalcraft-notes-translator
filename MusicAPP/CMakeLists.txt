@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(MusicAPP VERSION 1.0 LANGUAGES CXX)
+project(MusicAPP VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -10,12 +10,12 @@ find_package(Qt5 COMPONENTS Core Gui Widgets WebEngineWidgets REQUIRED)
 
 # Собираем miniz как отдельную библиотеку
 add_subdirectory(libs/miniz)
+add_subdirectory(src/Help)
 
 set(SOURCES
     src/main.cpp
     src/about.cpp
     src/debug.cpp
-    src/helpdialog.cpp
     src/mainwindow.cpp
     src/qtexteditstream.cpp
     libs/tiny/tinyxml2.cpp
@@ -24,16 +24,13 @@ set(SOURCES
 set(HEADERS
     src/about.h
     src/debug.h
-    src/helpdialog.h
     src/mainwindow.h
     src/qtexteditstream.h
     libs/tiny/tinyxml2.h
 )
 
 set(FORMS
-    ui/about.ui
     ui/debug.ui
-    ui/helpdialog.ui
 )
 
 set(RESOURCES
@@ -65,8 +62,21 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::WebEngineWidgets
     miniz
 )
+
+target_include_directories(MusicAPP PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/Help  # чтобы видеть исходники dll
+)
+
+#Копируем html справку к exe
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/guide"
         "$<TARGET_FILE_DIR:${PROJECT_NAME}>/guide"
+)
+
+# После сборки Help.dll — копируем её рядом с MusicAPP.exe
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:Help>"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
 )
