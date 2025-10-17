@@ -16,10 +16,10 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Консоль</string>
+   <string>Console</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="files.qrc">
+   <iconset resource="../resources/files.qrc">
     <normaloff>:/logo_console.png</normaloff>:/logo_console.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
@@ -48,14 +48,14 @@
      <item>
       <widget class="QPushButton" name="CopyButton">
        <property name="text">
-        <string>Скопировать</string>
+        <string>Copy</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="ClearButton">
        <property name="text">
-        <string>Очистить</string>
+        <string>Clear</string>
        </property>
       </widget>
      </item>
@@ -64,7 +64,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="files.qrc"/>
+  <include location="../resources/files.qrc"/>
  </resources>
  <connections/>
 </ui>

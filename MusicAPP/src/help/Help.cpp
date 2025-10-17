@@ -3,11 +3,16 @@
 #include <QIcon>
 #include <QCoreApplication>
 #include <QFile>
+#include <QSettings>
+#include <QGuiApplication>
+#include <QScreen>
 Help::Help(QWidget *parent) : QWidget (parent)
 {
     setWindowFlags(Qt::Window);
-    resize(parent->size());
+    loadSettings();
     this->setWindowIcon(QIcon(":/pigeon.jpg"));
+    this->setWindowTitle(tr("Manual"));
+    setWindowModality(Qt::NonModal);
     QHBoxLayout *layout = new QHBoxLayout(this);
     QWebEngineView *view = new QWebEngineView(this);
     layout->addWidget(view);
@@ -28,6 +33,52 @@ Help::Help(QWidget *parent) : QWidget (parent)
 Help::~Help()
 {
 
+}
+
+void Help::loadSettings()
+{
+    QSettings settings("config.ini", QSettings::IniFormat);
+    auto geometry = settings.value("Help/Geometry").toByteArray();
+    if(geometry.isEmpty()){     
+        if(QWidget *parent = parentWidget()){
+            resize(parent->size());
+            move(parent->pos());
+            settings.setValue("Help/Geometry", saveGeometry());
+        }
+        else{
+            resize(600,400);
+        }
+    }
+    else{
+        restoreGeometry(geometry);
+    }
+}
+
+void Help::saveSettings()
+{
+    QSettings settings("config.ini", QSettings::IniFormat);
+    settings.setValue("Help/Geometry", saveGeometry());
+}
+
+void Help::closeEvent(QCloseEvent *event)
+{
+    saveSettings();
+
+    QWebEngineView *view = findChild<QWebEngineView *>();
+        if(view) {
+            view->stop();           // остановка JS и загрузки
+            view->page()->setView(nullptr); // отвязать страницу от виджета
+            view->page()->deleteLater();
+            view->deleteLater();
+        }
+
+
+    QWidget::closeEvent(event); // вызываем базовый обработчик
+}
+
+void Help::slotTranslate()
+{
+    setWindowTitle(tr("Manual"));
 }
 
 extern "C"{

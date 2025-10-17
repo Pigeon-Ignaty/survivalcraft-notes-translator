@@ -14,7 +14,7 @@ About::About(QWidget *parent) : QDialog(parent)
 {
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    setWindowTitle(tr("О программе"));
+    setWindowTitle(tr("About"));
 
     //Стили для виджетов
     this->setStyleSheet(R"(
@@ -37,22 +37,22 @@ About::About(QWidget *parent) : QDialog(parent)
     )");
     auto layoutWithText = new QVBoxLayout;
     auto layoutLogo = new QVBoxLayout;
-    auto title = new QLabel("Программное обеспечение для перевода нот, октав, громкости звука и инструментов в 16-формат Survivalcraft", this);
+    auto title = new QLabel(tr("Software for translating notes, octaves, sound volume, and instruments into Survivalcraft's 16-format"), this);
     title->setObjectName("TitleLabel");
     title->setWordWrap(true);
     title->setMaximumWidth(460);
 
     auto appVersion = new QLabel(this);
-    appVersion->setText(tr("Версия приложения: %1").arg(QString::fromUtf8(HELP_VERSION)));
+    appVersion->setText(tr("Application version: %1").arg(QString::fromUtf8(HELP_VERSION)));
 
     QString helpVersion = getHelpVersion();
     QString text;
 
     if (!helpVersion.isEmpty()) {
-        text = tr("Версия справки: ") + helpVersion;
+        text = tr("Manual version: ") + helpVersion;
     } else {
-        text = tr("Справка не найдена. ") +
-                R"(<a href="https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/releases">Скачать</a>)";
+        QString url = "https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/releases";
+        text = tr("Manual not found. ") + QString("<a href=\"%1\">%2</a>").arg(url, tr("Download"));
     }
     auto libraryVersion = new QLabel(text, this);
     libraryVersion->setTextFormat(Qt::RichText);
@@ -60,26 +60,27 @@ About::About(QWidget *parent) : QDialog(parent)
     libraryVersion->setOpenExternalLinks(true);
 
     auto author = new QLabel(this);
-    author->setText(tr("Автор: <a href=\"https://github.com/Pigeon-Ignaty\">Pigeon Ignaty</a>"));
+    author->setText(tr("Author")+ ": <a href=\"https://github.com/Pigeon-Ignaty\">Pigeon Ignaty</a>");
     author->setTextFormat(Qt::RichText);
     author->setTextInteractionFlags(Qt::TextBrowserInteraction);
     author->setOpenExternalLinks(true);
 
-    auto copyright = new QLabel(tr("© 2024 - 2025 Права голубя защищены, но сам он не пользуется защитой"), this);
+    auto copyright = new QLabel(tr("© 2024 - 2025 Pigeon's rights are protected, but the pigeon itself doesn't use protection"), this);
     copyright->setWordWrap(true);
     copyright->setMaximumWidth(460);
 
-    auto description = new QLabel(tr("Данная программа предназначена для чтения файлов musicxml с нотами, обнаружения музыкальных партий и перевода их в специальный 16-формат. В результате музыка в игре воспроизводится практически так же, как и оригинальные ноты. Программа имеет удобный и понятный интерфейс, упрощающий процесс перевода нот и значительно экономящий время."), this);
+    auto description = new QLabel(tr("This program is designed to read musicxml files containing notes, detect musical parts, and convert them into a special 16-format. As a result, the music in the game plays almost the same as the original notes. The program features a user-friendly and intuitive interface that simplifies the note translation process and significantly saves time."), this);
     description->setWordWrap(true);
     description->setMaximumWidth(460);
 
     auto newReleases = new QLabel();
-    newReleases->setText(tr("<a href=\"https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/releases\">Проверить на наличие новой версии</a>"));
+    QString url = "https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/releases";
+    newReleases->setText(QString("<a href=\"%1\">%2</a>").arg(url, tr("Check for new version")));
     newReleases->setTextFormat(Qt::RichText);
     newReleases->setTextInteractionFlags(Qt::TextBrowserInteraction);
     newReleases->setOpenExternalLinks(true);
 
-    auto btnOk = new QPushButton(tr("Закрыть"), this);
+    auto btnOk = new QPushButton(tr("Close"), this);
     connect(btnOk, &QPushButton::clicked, this, &QDialog::accept);
 
     layoutWithText->addWidget(title);

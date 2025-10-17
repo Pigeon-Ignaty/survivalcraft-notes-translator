@@ -25,7 +25,8 @@
 #include <QCoreApplication>
 #include <QMenuBar>
 #include <QLibrary>
-
+#include <QTranslator>
+#include <QApplication>
 using namespace std;
 using namespace tinyxml2;
 
@@ -54,6 +55,11 @@ class MainWindow : public QMainWindow
     enum NoteType{
         Pitch = 0,
         Octave = 1
+    };
+
+    enum VersionTranslate{
+        Old = 0,
+        New = 1
     };
 
     struct OctaveRange {
@@ -90,6 +96,11 @@ class MainWindow : public QMainWindow
     };
     QMap<Instrument, OctaveRange> m_instrOctRangeCurrent;
 
+    struct Language {
+        static constexpr const char* ru = "ru";
+        static constexpr const char* en = "en";
+    };
+
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -102,7 +113,6 @@ public slots:
     void slotOpenMenuConsole(bool checked);//Окно создание/скрытия или открытия окна консоли
 
     void slotOpenAboutQT();//Открыть окно о qt
-    void slotSaveUISettings(); //Слот выхода из приложения для сохранения настроек в ini
 
     void slotOpenFile();//Нажатие кнопки Открыть
     void slotCloseFile();//Нажатие кнопки Закрыть
@@ -116,18 +126,19 @@ public slots:
 
     void slotAboutApplication();
 
-    void slotOpenHelpWindow(); //слот закрытия окна справки
-
+    void slotOpenManual();
+    void slotChangeLanguage(QAction *action);//Слот смены языка
     void slotChangedVersion();
-
-public slots:
-    void SlotConsoleClose();
+    void slotConsoleClose();
+public:
+    void retranslateUI();
 protected:
     void closeEvent(QCloseEvent *event) override;
 
 signals:
-    void SignalMainWindowClose();
+    void signalMainWindowClose();
     void showAboutWindow(); //сигнал открытия окна о приложении
+    void signalChangeLanguage();
 private:
     //################################## UI элементы
     QWidget *m_centralWidget = nullptr;
@@ -153,22 +164,26 @@ private:
     QAction *m_exitAction = nullptr;
 
     // Действия меню Настройки
+    QActionGroup *m_languageGroup = nullptr;
+    QAction *m_ruAction = nullptr;
+    QAction *m_enAction = nullptr;
     QAction *m_configDrumsAction = nullptr;//Не используется
     QAction *m_configStringNameAction = nullptr;//Не используется
     QAction *m_consoleAction = nullptr;
-    QAction *m_versionBefore24SubAction = nullptr;
-    QAction *m_versionAfter24SubAction = nullptr;
+    QAction *m_newVersionTranslateAction = nullptr;
+    QAction *m_oldVersionTranslateAction = nullptr;
 
     // Действия меню Справка
     QAction *m_helpAction = nullptr;
     QAction *m_aboutApplicationAction = nullptr;
     QAction *m_aboutQtAction = nullptr;
 
-    // Меню (если ты будешь их модифицировать программно)
+    // Меню бар
     QMenu *m_fileMenu = nullptr;
     QMenu *m_settingsMenu = nullptr;
     QMenu *m_helpMenu = nullptr;
     QMenu *m_versionMenu = nullptr;
+    QMenu *m_languageSelectionMenu = nullptr;//Выбор языка
 
     QTextEditStreamOutput *sout; // Объявление объекта outputStream
     Debug *console;//окно консоли
@@ -176,7 +191,7 @@ private:
 
     QLibrary helpLib;//Библиотека справки
     QWidget *m_helpWidget = nullptr; //окно справки
-
+    QTranslator *m_translator = nullptr;
     //данные из класса  MusicXMLReader
     XMLDocument doc; // объект класса XML
     bool successOpenFile = false; //флаг успешного открытия файла
@@ -262,6 +277,10 @@ private:
     void print_amount(int note, int duration, int league, QVector <int>& notes_or_octaves); //формирование последовательности нот или октав с учётом длительности и лиг
 
 private:
-
+    void initializeConsole();
+    void resetDefaultSettings(QSettings & settings);
+    void loadSettings(QSettings & settings);
+    void saveSettings(QSettings & settings);
+    void updateInstrumentsComboBox() const;
 };
 #endif // MAINWINDOW_H

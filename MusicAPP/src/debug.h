@@ -27,6 +27,7 @@ signals:
 public slots:
     void receiveText(const QString& text);
     void SlotMainWindowClose();
+    void slotTranslate();
 private slots:
     void on_ClearButton_clicked();
     void on_CopyButton_clicked();

@@ -3,6 +3,9 @@
         <file>logo_console.png</file>
         <file>logo_qt.ico</file>
         <file>logo_main.png</file>
-		<file>pigeon.jpg</file>
+        <file>pigeon.jpg</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>translations/SCNotesTranslator_ru.qm</file>
     </qresource>
 </RCC>

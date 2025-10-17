@@ -14,6 +14,12 @@ class HELPSHARED_EXPORT Help : public QWidget
 public:
     Help(QWidget *parent = nullptr);
     ~Help();
+    void loadSettings();
+    void saveSettings();
+protected:
+    void closeEvent(QCloseEvent *event) override;
+public slots:
+    void slotTranslate();
 };
 
 

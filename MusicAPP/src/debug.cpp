@@ -33,6 +33,12 @@ void Debug::SlotMainWindowClose()
     Debug::close();
 }
 
+void Debug::slotTranslate()
+{
+    setWindowTitle(tr("Console"));
+    ui->retranslateUi(this);
+}
+
 void Debug::on_ClearButton_clicked()
 {
     ui->TextConsole->clear(); //очистить консоль
