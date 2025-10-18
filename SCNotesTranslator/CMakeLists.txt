@@ -51,7 +51,7 @@ qt5_wrap_ui(UI_HEADERS ${FORMS})
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-add_executable(${PROJECT_NAME}
+add_executable(${PROJECT_NAME} WIN32
     ${SOURCES}
     ${HEADERS}
     ${UI_HEADERS}

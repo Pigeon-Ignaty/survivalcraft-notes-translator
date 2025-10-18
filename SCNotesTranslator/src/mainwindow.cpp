@@ -1188,7 +1188,8 @@ void MainWindow::loadHelpLibrary()
 {
     QString oldPath = QDir::currentPath();
 
-    helpLib.setFileName("Help");
+    QString dllPath = QCoreApplication::applicationDirPath() + "/Help.dll";
+    helpLib.setFileName(dllPath);
     //Ищем библиотку рядом с exe и в папке guide
     if (!helpLib.load()) {
         *sout << "Библиотека справки не найдена по основному пути!\n";

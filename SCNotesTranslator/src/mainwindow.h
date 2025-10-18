@@ -27,6 +27,7 @@
 #include <QLibrary>
 #include <QTranslator>
 #include <QApplication>
+
 using namespace std;
 using namespace tinyxml2;
 

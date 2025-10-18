@@ -1,4 +1,5 @@
 #include "Help.h"
+
 #include <QLabel>
 #include <QIcon>
 #include <QCoreApplication>
@@ -6,29 +7,70 @@
 #include <QSettings>
 #include <QGuiApplication>
 #include <QScreen>
-Help::Help(QWidget *parent) : QWidget (parent)
+#include <QDir>
+#include <QWebEngineProfile>
+#include <QWebEnginePage>
+#include <QWebEngineUrlRequestInterceptor>
+#include <QWebEngineView>
+#include <QDesktopServices>
+#include <QHBoxLayout>
+#include <QDebug>
+
+
+// Класс страницы, который открывает ссылки во внешнем браузере
+class ExternalPage : public QWebEnginePage {
+public:
+    using QWebEnginePage::QWebEnginePage;
+
+protected:
+    bool acceptNavigationRequest(const QUrl &url, NavigationType type, bool isMainFrame) override {
+        if (type == QWebEnginePage::NavigationTypeLinkClicked) {
+            QDesktopServices::openUrl(url); // открываем ссылку вне приложения
+            return false; // не загружаем ссылку в QWebEngineView
+        }
+        return QWebEnginePage::acceptNavigationRequest(url, type, isMainFrame);
+    }
+};
+
+Help::Help(QWidget *parent) : QWidget(parent)
 {
     setWindowFlags(Qt::Window);
-    loadSettings();
-    this->setWindowIcon(QIcon(":/pigeon.jpg"));
-    this->setWindowTitle(tr("Manual"));
     setWindowModality(Qt::NonModal);
-    QHBoxLayout *layout = new QHBoxLayout(this);
-    QWebEngineView *view = new QWebEngineView(this);
-    layout->addWidget(view);
-    layout->setContentsMargins(0, 0, 0, 0);
-    setLayout(layout);
-    //Проверяем пути, вдруг распаковали с лишней папкой guide
-    QString mainPath = QCoreApplication::applicationDirPath() + "/guide/index.html";
-    if(!QFile::exists(mainPath)){
-        QString reservePath = QCoreApplication::applicationDirPath() + "/guide/guide/index.html";
+    setWindowIcon(QIcon(":/pigeon.jpg"));
+    setWindowTitle(tr("Manual"));
 
-        if(QFile::exists(reservePath)){
+    loadSettings();
+
+    auto *layout = new QHBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+
+    // Создаём профиль WebEngine в папке приложения
+    QString profilePath = QCoreApplication::applicationDirPath() + "/web_profile";
+    QDir().mkpath(profilePath);
+    auto *profile = new QWebEngineProfile(profilePath, this);
+    auto *page = new ExternalPage(profile, this);
+
+    auto *view = new QWebEngineView(this);
+    view->setPage(page);
+    layout->addWidget(view);
+    setLayout(layout);
+
+    // Определяем путь к файлу справки
+    QString baseDir = QCoreApplication::applicationDirPath();
+    QString mainPath = QDir::cleanPath(baseDir + QDir::separator() + "guide/index.html");
+
+    if (!QFile::exists(mainPath)) {
+        QString reservePath = QDir::cleanPath(baseDir + QDir::separator() + "guide/guide/index.html");
+        if (QFile::exists(reservePath)) {
             mainPath = reservePath;
         }
     }
-    view->load(QUrl::fromLocalFile(mainPath));
+
+    // Загружаем HTML-файл
+    QUrl url = QUrl::fromLocalFile(mainPath);
+    view->load(url);
 }
+
 
 Help::~Help()
 {
@@ -46,12 +88,13 @@ void Help::loadSettings()
             settings.setValue("Help/Geometry", saveGeometry());
         }
         else{
-            resize(600,400);
+            resize(640,480);
         }
     }
     else{
         restoreGeometry(geometry);
     }
+    this->setMinimumSize(640,480);
 }
 
 void Help::saveSettings()

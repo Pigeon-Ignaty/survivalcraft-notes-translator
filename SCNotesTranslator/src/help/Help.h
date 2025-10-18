@@ -7,6 +7,7 @@
 #include <QDialog>
 #include <QWebEngineView>
 #include <QHBoxLayout>
+#include <QDesktopServices>
 
 class HELPSHARED_EXPORT Help : public QWidget
 {
