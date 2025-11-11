@@ -105,6 +105,8 @@ In this section, all major changes, additions, and deletions in the code are rec
 	* English translation has been added (all windows are dynamically translated after the user changes the language, except for help content and console messages). The saving and restoring of settings has been reworked using an INI file: on first launch, an INI file is created with default settings. The application language is automatically detected based on the user's system language; if the language is not supported, English is used by default. On first launch, the main window opens at 60% of the screen size. The application has been renamed to SCNotesTranslator and Survivalcraft Notes Translator. An RC file has been added to define executable file properties (such as version, icon, and product information), which are displayed in the file's properties dialog.
 * 18th October 2025
 	* Release preparation: added an icon to the executable file, migrated the project to Qt 5.15.2, fixed the help window not opening in the release version. Also, clicking a link in the help window now opens the website in the browser.
+ * 11th November 2025
+ 	* Fixed a bug: the instruments octaves were displayed incorrectly. Also, the bell's octave range started from the first broken octave.
 ___
 # RU Survivalcraft Notes Translator 
 Survivalcraft Notes Translator - это программа, которая считывает файлы musicxml, извлекает найденные партии и голоса и переводит ноты и октавы из выбранного голоса в формат звукового генератора в Survivalcraft.
@@ -202,3 +204,5 @@ ___
 	* Добавлен перевод на английский язык (все окна будут динамически переводиться после смены языка пользователем, кроме содержимого справки и сообщений в консоли). Переделано сохранение и восстановление настроек в ini-файле: при первом запуске создаётся ini-файл с настройками по умолчанию (язык определяется по системным настройкам пользователя, если язык не поддерживается, используется английский по умолчанию). Также при первом запуске приложение открывается в основном окне размером 60% от экрана. Переименованы названия приложения на SCNotesTranslator и Survivalcraft Notes Translator. Добавлен rc-файл для задания свойств исполняемого файла (например, версии, иконки и информации о продукте), которые отображаются в свойствах exe.
 * 18.10.25
 	* Подготовка к выпуску. Добавлена иконка к запускному файлу, перенос проекта на qt 5.15.2, исправил открытие окна справки в release версии, также при клике на ссылку в справке будет открываться сайт в браузере.
+ * 11.11.25
+ 	* Исправлена ошибка: неправильно выводилась строка инструментов (для колокольчика — 0, хотя должно быть 1). Также у колокольчика диапазон октав начинался с первой ломанной октавы.
