@@ -17,10 +17,15 @@ MainWindow::~MainWindow()
 
 }
 
-void MainWindow::slotOpenFile() //открытие файла
+void MainWindow::slotOpenFile(QString testPathFile) //открытие файла
 {
     QSettings settings("config.ini", QSettings::IniFormat);
-    QString path_to_file = QFileDialog::getOpenFileName(this,tr("Select a .musicxml file"),settings.value("UI/LastOpenFilePath","").toString(),"*.musicxml *.mxl");
+    QString path_to_file;
+    if(testPathFile.isEmpty())//Если не тест, то выбираем через проводник
+        path_to_file = QFileDialog::getOpenFileName(this,tr("Select a .musicxml file"),settings.value("UI/LastOpenFilePath","").toString(),"*.musicxml *.mxl");
+    else
+        path_to_file = testPathFile; //Иначе тест и получает путь из теста
+
     if(path_to_file.isEmpty()){
         return;
     }
@@ -28,6 +33,7 @@ void MainWindow::slotOpenFile() //открытие файла
         settings.setValue("UI/LastOpenFilePath", path_to_file);
         *sout << "Последний сохраненный путь:" << path_to_file.toUtf8().constData() << endl;
         }
+
     QFileInfo extension(path_to_file); //получаем расширение файла
     QByteArray xmlFile;
     if(extension.suffix() == "mxl")//если архив, то распаковка
@@ -52,7 +58,7 @@ void MainWindow::slotOpenFile() //открытие файла
         *sout <<"Ошибка открытия " << doc.Error()<< endl;
         slotCloseFile();
         return;
-        }
+    }
 
     else{//если успех
         slotCloseFile();
@@ -905,7 +911,9 @@ void MainWindow::setupUi()
     this->setWindowIcon(QIcon(":/logo_main.png"));
     //Подключения Action в Файл
     connect(m_helpAction, &QAction::triggered, this, &MainWindow::slotOpenMenuConsole);
-    connect(m_openAction , &QAction::triggered, this, &MainWindow::slotOpenFile);
+    connect(m_openAction , &QAction::triggered, this, [=](){
+        slotOpenFile("");
+    });
     connect(m_closeAction, &QAction::triggered, this, &MainWindow::slotCloseFile);
     connect(m_exitAction, &QAction::triggered, qApp, &QApplication::quit);
     //Подключения Action в Настройках
@@ -1134,7 +1142,7 @@ void MainWindow::saveSettings(QSettings &settings)
     settings.setValue("UI/ComboBoxInstruments",m_comboInstrumentSelection->currentData());
 }
 
-void MainWindow::updateInstrumentsComboBox() const
+void MainWindow::updateInstrumentsComboBox()
 {
     m_comboInstrumentSelection->blockSignals(true);
     //Получаем текущий выбранный инструмент
@@ -1154,14 +1162,16 @@ void MainWindow::updateInstrumentsComboBox() const
 
     //Добавляем все инструменты, кроме последнего из списка
     for (int i = 0; i < 8;i++) {
-        m_comboInstrumentSelection->addItem(instrumentsList.value(i), i);
+        m_comboInstrumentSelection->addItem(instrumentsList.value(i), i + 1);
     }
     //Если новая версия, то добавляем последний инструмент
     if(m_newVersionTranslateAction->isChecked()){
         m_comboInstrumentSelection->addItem(instrumentsList.last(),Instrument::Bass);
+        m_instrOctRangeCurrent = m_instrOctRangeNew; //заменяем map новыми инструментами
     }
     else if(m_oldVersionTranslateAction->isChecked()){
         m_comboInstrumentSelection->setItemText(0, tr("1. Bell (The first octave is broken, see manual)"));
+        m_instrOctRangeCurrent = m_instrOctRangeOld;
     }
     //Выбираем изначальный инструмент, иначе фортепиано по умолчанию
     int index = m_comboInstrumentSelection->findData(currentData);
@@ -1403,6 +1413,7 @@ void MainWindow::slotChangeLanguage(QAction *action)
     //Если русский, то устанавливаем m_translator
     if(action->data().toString() == Language::ru){
         m_translator = new QTranslator(this);
+
         if(m_translator->load(":/translations/SCNotesTranslator_ru.qm"))
             qApp->installTranslator(m_translator);
     }

@@ -115,7 +115,7 @@ public slots:
 
     void slotOpenAboutQT();//Открыть окно о qt
 
-    void slotOpenFile();//Нажатие кнопки Открыть
+    void slotOpenFile(QString testPathFile = "");//Нажатие кнопки Открыть
     void slotCloseFile();//Нажатие кнопки Закрыть
 
     void slotComboBoxPartsIndexChanged(int index);//Слот изменения партии
@@ -193,6 +193,7 @@ private:
     QLibrary helpLib;//Библиотека справки
     QWidget *m_helpWidget = nullptr; //окно справки
     QTranslator *m_translator = nullptr;
+
     //данные из класса  MusicXMLReader
     XMLDocument doc; // объект класса XML
     bool successOpenFile = false; //флаг успешного открытия файла
@@ -282,6 +283,6 @@ private:
     void resetDefaultSettings(QSettings & settings);
     void loadSettings(QSettings & settings);
     void saveSettings(QSettings & settings);
-    void updateInstrumentsComboBox() const;
+    void updateInstrumentsComboBox();
 };
 #endif // MAINWINDOW_H
