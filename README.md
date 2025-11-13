@@ -4,7 +4,7 @@
 
 <p align="center">
 <img src="https://img.shields.io/badge/Framework-Qt5%2FC%2B%2B-green?style=flat-square&logoColor=red"">
-<a href="https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/releases"><img src="https://img.shields.io/badge/Stable%20Version%20-%20no-red?style=flat-square&logoColor=red"></a>
+<a href="https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/releases"><img src="https://img.shields.io/badge/Stable%20Version-1.0.0-red?style=flat-square"></a>
 <a href="https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/blob/gui/LICENSE"><img src="https://img.shields.io/badge/License%20-GPL%20%20-blue?style=flat-square&logoColor=red"></a>
 <img src="https://img.shields.io/badge/OS%20-%20Windows%20-%20%238932a8?style=flat-square">
 </p>
