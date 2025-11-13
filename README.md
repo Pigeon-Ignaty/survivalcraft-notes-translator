@@ -12,32 +12,71 @@
 # About 📔
 Survivalcraft Notes Translator is a program that reads musicxml files, extracts the found parts and voices, and translates notes and octaves from the selected voice into the format of the sound generator in Survivalcraft.
 
-## Installation
-1. Download the current version [here](https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/releases)
-2. Unpack the archive to any convenient location
-3. Launch file.exe
+## Installation and Launch
+
+### Operating System
+- Windows 7 SP1 / Windows 8.1 / Windows 10 / Windows 11 (all **64-bit**)  
+- Installed [**Microsoft Visual C++ 2019 Redistributable (x64)**](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)  
+- The program is **portable** — installation is **not required**
+
+### Downloading the Program
+1. Go to the releases page:  
+   [**Download the latest version**](https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/releases)
+2. Choose the appropriate build:
+   - **EXE version** — contains only `SCNotesTranslator.exe` *(smallest size)*  
+   - **DLL version** — contains only the user guide *(as a separate library)*  
+   - **Full version** — includes both `SCNotesTranslator.exe` and the guide
+3. Download the archive of the selected version.  
+4. Extract the archive to any convenient location (for example, the Desktop or a separate folder).
+
+### Running the Program
+1. In the extracted folder, find the file **`SCNotesTranslator.exe`**.  
+2. Double-click it to run the application.  
+3. The program is ready to use!
+
+> **If you need the user guide:**  
+> 1. Download the **DLL version**.  
+> 2. Extract the archive.  
+> 3. Place its contents next to `SCNotesTranslator.exe`.  
+> 4. Restart the program.
 
 ## What's Implemented 🚀<a name="whats-implemented "></a>
-- Open and read musicxml compressed and uncompressed files
-- Output of party names and their selection
-- Withdrawal of all votes in the party and their selection
-- Translation of the simplest single notes
-- Output hexadecimal notation for notes, octaves, instruments and volume
-- Instrument selection and automatic transposition of notes to the desired octave depending on the range of the instrument (the first octave is cut off for the bell, as it sounds in dissonance)
-- Determining the league and lengthening the note duration
-- Work with all major clock sizes
-- Automatic splitting into 256-character strings with 'F' characters in case the string does not reach this length.
-- Translation of percussion instruments
-  
-## What's Not Implemented 🗿<a name="whats-not-implemented "></a>
-- Opening and reading .midi files
-- Splitting chords into separate parts and translating them
-- Translation of duoles, trioles, quartoles, quintoles, etc.
-- Translation of sound volume changes
-- No music translation for the 2.4 version of the game with the updated sound generator operation
 
-## User guide
-For detailed information on how to use the application, open the [User's guide](path to the file.html), available in HTML format. It provides instructions on how to use the program.
+- Opening and reading simple `.musicxml` and `.mxl` files.  
+- Detection of parts and voices within a composition.  
+- Automatic translation of part and voice names when switching in the list.  
+- Translation of basic single notes.  
+- Display of hexadecimal representations for notes, octaves, instruments, and volume.  
+- Instrument selection and automatic transposition of notes to the appropriate octave,  
+  depending on the instrument’s range  
+  *(for bells in older translation versions, the first octave was omitted due to dissonance)*.  
+- Detection of ties and automatic note length extension.  
+- Support for all common time signatures.  
+- Automatic line splitting into 256-character segments,  
+  padding with the character `F` if the line is shorter.  
+- Translation of percussion instruments.  
+- Selection of translation version (pre-2.4 and post-2.4).  
+- Application language selection.  
+- Saving of settings between sessions.
+
+## What's Not Implemented 🗿<a name="whats-not-implemented "></a>
+- Opening and reading `.midi` files.  
+- Splitting chords into separate parts and translating them.  
+- Translation of tuplets (duplets, triplets, quadruplets, quintuplets, etc.).  
+- Translation of dynamic (volume) changes.  
+- Performance optimization.  
+- Interface themes.
+
+## User Guide
+You can access the user guide in one of two ways:
+
+1. **Use the Full version** — the guide is already included.  
+2. **Download the DLL version** — this archive contains the guide and should be extracted next to `SCNotesTranslator.exe`.
+
+Then open the guide using one of the following methods:
+- In the program: **Help → Manual**  
+- Or manually via File Explorer by opening:  
+information on how to use the application, open the **..\SCNotesTranslatorFull\guide\index.html**, available in HTML format.
 
 ## Acknowledgements
 - This project uses the [tinyxml2](https://github.com/leethomason/tinyxml2) library for XML parsing.
@@ -107,36 +146,96 @@ In this section, all major changes, additions, and deletions in the code are rec
 	* Release preparation: added an icon to the executable file, migrated the project to Qt 5.15.2, fixed the help window not opening in the release version. Also, clicking a link in the help window now opens the website in the browser.
  * 11th November 2025
  	* Fixed a bug: the instruments octaves were displayed incorrectly. Also, the bell's octave range started from the first broken octave.
+
+## Build Requirements
+
+To build the project from source, the following tools and libraries are required:
+
+### Operating System
+- Windows 7 SP1 / Windows 8.1 / Windows 10 / Windows 11 (all **64-bit**)
+
+### Development Tools
+- **Qt 5.15.2 (64-bit)** — including modules **Qt Widgets**, **Qt Core**, **Qt GUI**, **Qt WebEngineWidgets**, and **Qt LinguistTools**  
+- **CMake** (recommended version ≥ 3.16)  
+- **Microsoft Visual Studio 2019** with the **Desktop development with C++** workload  
+- Compiler: **MSVC 2019 (x64)**  
+- **Microsoft Visual C++ 2019 Redistributable (x64)**
+
+### Build Instructions
+1. Clone the repository:
+```
+   git clone https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator.git
+```
+2. Open the `CMakeLists.txt` file and configure the project for Release or Debug build.
+3. The option: **option(BUILD_HELP_DLL "Build Help DLL" ON)** allows building the project with or without the Help.dll module.
 ___
 # RU Survivalcraft Notes Translator 
 Survivalcraft Notes Translator - это программа, которая считывает файлы musicxml, извлекает найденные партии и голоса и переводит ноты и октавы из выбранного голоса в формат звукового генератора в Survivalcraft.
 
-## Установка 🔧
-1. Скачайте текущую версию [здесь](https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/releases)
-2. Распакуйте архив в любое удобное для вас место
-3. Запустите file.exe
+## Установка и запуск 🔧
 
-## Что реализовано 🎹<a name="realized"></a>
-- Открытие и чтение файлов сжатых и несжатых musicxml
-- Вывод названий партий и их выбор
-- Вывод всех голосов в партии и их выбор
-- Перевод простейших одиночных нот
-- Вывод шестнадцатеричной записи для нот, октав, инструментов и громкости
-- Выбор инструмента и автоматическое транспонирование нот на нужную октаву в зависимости от диапазона инструмента (для колокольчика обрезана первая октава, так как она звучит в диссонанс)
-- Определение лиги и удлинение длительности ноты
-- Работа со всеми основными размерами тактов
-- Автоматическое разбиение на строки по 256 символов с заполнением символами 'F' в случае, если строка не достигает этой длины
-- Перевод ударных инструментов
+### 🖥️ Операционная система
+- Windows 7 SP1 / Windows 8.1 / Windows 10 / Windows 11 (все — **64-бит**)  
+- Установлен [**Microsoft Visual C++ 2019 Redistributable (x64)**](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)  
+- Программа **portable** — установка **не требуется**
 
-## Что не реализовано <a name="unrealized"></a>
-- Открытие и чтение .midi файлов
-- Разбиение аккордов на отдельные партии и их перевод
-- Перевод дуолей, триолей, квартолей, квинтолей и т. д.
-- Перевод изменения громкости звука
-- Отсутствие перевода музыки для версии игры 2.4 с обновлённой работой генератора звука
-  
-## Руководство пользователя 
-Для получения подробной информации о том, как использовать приложение, откройте [руководство пользователя](путь_к_файлу.html), доступное в формате HTML. В нем представлены инструкции по использованию программы.
+### Загрузка программы
+1. Перейдите на страницу релизов:  
+   [**Скачать последнюю версию**](https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/releases)
+2. Выберите подходящую сборку:
+   - **EXE-версия** — содержит только файл `SCNotesTranslator.exe` *(наименьший размер)*  
+   - **DLL-версия** — содержит только руководство *(отдельно подключаемая библиотека)*  
+   - **Full-версия** — включает `SCNotesTranslator.exe` и руководство
+3. Скачайте архив выбранной версии.  
+4. Распакуйте архив в любое удобное место (например, на рабочий стол или в отдельную папку).
+
+### Запуск программы
+1. В распакованной папке найдите файл **`SCNotesTranslator.exe`**.  
+2. Дважды щёлкните по нему для запуска.  
+3. Программа готова к использованию!
+
+> **Если потребуется руководство:**  
+> 1. Скачайте **DLL-версию**.  
+> 2. Распакуйте архив.  
+> 3. Поместите содержимое рядом с `SCNotesTranslator.exe`.  
+> 4. Перезапустите программу.
+---
+## Что реализовано 🎹 <a name="realized"></a>
+
+- Открытие и чтение простых `.musicxml` и `.mxl` файлов.  
+- Определение партий и голосов в произведении.  
+- Автоматический перевод партии и голоса при переключении списка.  
+- Перевод простейших одиночных нот.  
+- Вывод шестнадцатеричной записи для нот, октав, инструментов и громкости.  
+- Выбор инструмента и автоматическое транспонирование нот в нужную октаву в зависимости от диапазона инструмента  
+  *(для колокольчика в старой версии перевода первая октава обрезана, так как звучала в диссонанс)*.  
+- Определение лиг и автоматическое удлинение длительности нот.  
+- Поддержка всех основных размеров тактов.  
+- Автоматическое разбиение текста на строки по 256 символов с заполнением символами `F`, если строка короче.  
+- Перевод ударных инструментов.  
+- Выбор версии перевода (до 2.4 и после).  
+- Переключение языка приложения.  
+- Сохранение настроек между запусками программы.
+
+## Что не реализовано ⚙️ <a name="unrealized"></a>
+
+- Открытие и чтение `.midi` файлов.  
+- Разбиение аккордов на отдельные партии и их перевод.  
+- Перевод дуолей, триолей, квартолей, квинтолей и т. д.  
+- Перевод изменений громкости звука.  
+- Оптимизация производительности.  
+- Темы оформления интерфейса.
+
+## Руководство пользователя
+
+Для просмотра руководства можно использовать один из двух способов:
+
+1. **Использовать Full-версию программы** — руководство уже включено.  
+2. **Скачать DLL-версию** — архив с руководством, который нужно распаковать рядом с `SCNotesTranslator.exe`.
+
+После этого откройте руководство одним из следующих способов:
+- В самой программе: **Справка → Руководство**  
+- Или вручную через проводник, открыв файл:  **..\SCNotesTranslatorFull\guide\index.html** После этого руководство откроется в браузере.
 
 ## Используемые библиотеки 📚
 - [tinyxml2](https://github.com/leethomason/tinyxml2) — для парсинга XML.
@@ -206,3 +305,25 @@ ___
 	* Подготовка к выпуску. Добавлена иконка к запускному файлу, перенос проекта на qt 5.15.2, исправил открытие окна справки в release версии, также при клике на ссылку в справке будет открываться сайт в браузере.
  * 11.11.25
  	* Исправлена ошибка: неправильно выводилась строка инструментов (для колокольчика — 0, хотя должно быть 1). Также у колокольчика диапазон октав начинался с первой ломанной октавы.
+---
+## Требования для сборки проекта
+
+Для сборки проекта из исходного кода требуются следующие инструменты и библиотеки:
+
+### Операционная система
+- Windows 7 SP1 / Windows 8.1 / Windows 10 / Windows 11 (все **64-бит**)
+
+### Инструменты разработки
+- **Qt 5.15.2 (64-бит)** — включая модули **Qt Widgets**, **Qt Core**, **Qt GUI**, **Qt WebEngineWidgets** и **Qt LinguistTools**  
+- **CMake** (рекомендуемая версия ≥ 3.16)  
+- **Microsoft Visual Studio 2019** с установленной нагрузкой **Desktop development with C++**
+- Компилятор: **MSVC 2019 (x64)**  
+- **Microsoft Visual C++ 2019 Redistributable (x64)**
+
+### Инструкция по сборке
+1. Клонируйте репозиторий:
+```
+git clone https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator.
+```
+2. Откройте файл `CMakeLists.txt` и настройте проект для сборки в режиме Release или Debug.
+3. Опция **option(BUILD_HELP_DLL "Build Help DLL" ON)** позволяет собирать проект с модулем Help.dll или без него.
