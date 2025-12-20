@@ -57,6 +57,7 @@ void MainWindow::slotOpenFile(QString testPathFile) //открытие файл�
         errorMessage.exec();
         *sout <<"Ошибка открытия " << doc.Error()<< endl;
         slotCloseFile();
+        emit signalBadXmlFile();
         return;
     }
 

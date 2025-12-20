@@ -4,22 +4,24 @@ project(SCNotesTranslator VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+find_package(Qt5 COMPONENTS Core Gui Widgets WebEngineWidgets LinguistTools Test REQUIRED)
 
-find_package(Qt5 COMPONENTS Core Gui Widgets WebEngineWidgets LinguistTools REQUIRED)
+set(XML_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests/resources/xml)
+add_compile_definitions(XML_DIR="${XML_DIR}")
 
-# Собираем miniz как отдельную библиотеку
+option(BUILD_HELP_DLL "Build Help DLL" ON)
+
 add_subdirectory(libs/miniz)
-add_subdirectory(src/Help)
+if(BUILD_HELP_DLL)
+    add_subdirectory(src/Help)
+endif()
 
 set(SOURCES
-    src/main.cpp
     src/about.cpp
     src/debug.cpp
     src/mainwindow.cpp
     src/qtexteditstream.cpp
     libs/tiny/tinyxml2.cpp
-    version.rc
 )
 
 set(HEADERS
@@ -43,29 +45,27 @@ set(TS_FILES
 )
 
 qt5_add_translation(QM_FILES ${TS_FILES})
-
 add_custom_target(translations ALL DEPENDS ${QM_FILES})
-
 qt5_wrap_ui(UI_HEADERS ${FORMS})
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-add_executable(${PROJECT_NAME} WIN32
+# ---- 1. Библиотека с логикой перевода ----
+add_library(SCNotesTranslatorLib STATIC
     ${SOURCES}
     ${HEADERS}
     ${UI_HEADERS}
     ${RESOURCES}
-    ${QM_FILES}
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE
+target_include_directories(SCNotesTranslatorLib PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}
-    libs/tiny
-    libs/miniz
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/tiny
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/miniz
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(SCNotesTranslatorLib
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
@@ -73,25 +73,67 @@ target_link_libraries(${PROJECT_NAME}
     miniz
 )
 
-target_include_directories(SCNotesTranslator PRIVATE
-    ${CMAKE_SOURCE_DIR}/src/Help  # чтобы видеть исходники dll
+# ---- 2. Основное приложение ----
+add_executable(${PROJECT_NAME} WIN32
+    src/main.cpp
+    version.rc
+    ${RESOURCES}
 )
 
-#Копируем html справку к exe
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/guide"
-        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/guide"
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    SCNotesTranslatorLib
+    Qt5::Test
 )
 
-# После сборки Help.dll — копируем её рядом с SCNotesTranslator.exe
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "$<TARGET_FILE:Help>"
-        "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+# ---- 3. Тест приложения ----
+enable_testing()
+
+set(TEST_RESOURCES
+    tests/resources/testXml.qrc
+    #resources/translations.qrc
 )
 
-# Копируем готовые .qm рядом с exe
+qt5_add_resources(TEST_RESOURCES_ADDED ${TEST_RESOURCES})
+
+add_executable( SCNotesTranslatorTest
+    tests/test_SCNotesTranslator.cpp
+    tests/test_SCNotesTranslator.h
+    ${TEST_SOURCES}
+    ${TEST_RESOURCES_ADDED}
+)
+target_link_libraries(SCNotesTranslatorTest PRIVATE
+    SCNotesTranslatorLib
+    Qt5::Test
+)
+
+target_include_directories(SCNotesTranslatorTest PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    libs/tiny
+    libs/miniz
+)
+
+add_test(NAME IntegrationGuiLogicTest COMMAND SCNotesTranslatorTest)
+
+# ---- Help DLL ----
+if(BUILD_HELP_DLL)
+    target_include_directories(${PROJECT_NAME} PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/Help
+    )
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/guide"
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>/guide"
+    )
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "$<TARGET_FILE:Help>"
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+    )
+endif()
+
+# ---- Перенос .qm ----
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${QM_FILES}

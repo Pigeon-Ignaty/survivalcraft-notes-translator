@@ -284,5 +284,10 @@ private:
     void loadSettings(QSettings & settings);
     void saveSettings(QSettings & settings);
     void updateInstrumentsComboBox();
+
+    //Данные для работы теста
+    friend class Test_SCNotesTranslator;
+signals:
+    void signalBadXmlFile();//Открыт некорректный файл
 };
 #endif // MAINWINDOW_H

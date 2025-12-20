@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>xml/Bad_Piggies_Theme.musicxml</file>
+        <file>xml/Drums.mxl</file>
+        <file>xml/AllNotes_test.musicxml</file>
+        <file>xml/SUBWAY SURFERS (Main Theme).musicxml</file>
+        <file>xml/voices.musicxml</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>results/AllNotes_test_VERIFIED.txt</file>
+        <file>results/Bad_Piggies_Theme_VERIFIED.txt</file>
+        <file>results/Drums_VERIFIED.txt</file>
+        <file>results/SUBWAY SURFERS (Main Theme)_VERIFIED.txt</file>
+        <file>results/voices_VERIFIED.txt</file>
+    </qresource>
+</RCC>

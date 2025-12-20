@@ -66,22 +66,12 @@
         <source>Console</source>
         <translation>Консоль</translation>
     </message>
-    <message>
-        <location filename="../../src/debug.cpp" line="39"/>
-        <source>Copy</source>
-        <translation>Скопировать</translation>
-    </message>
-    <message>
-        <location filename="../../src/debug.cpp" line="40"/>
-        <source>Clear</source>
-        <translation>Очистить</translation>
-    </message>
 </context>
 <context>
     <name>Help</name>
     <message>
-        <location filename="../../src/help/Help.cpp" line="14"/>
-        <location filename="../../src/help/Help.cpp" line="81"/>
+        <location filename="../../src/help/Help.cpp" line="40"/>
+        <location filename="../../src/help/Help.cpp" line="124"/>
         <source>Manual</source>
         <translation>Руководство</translation>
     </message>
@@ -89,289 +79,291 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="152"/>
-        <location filename="../../src/mainwindow.cpp" line="774"/>
+        <location filename="../../src/mainwindow.cpp" line="160"/>
+        <location filename="../../src/mainwindow.cpp" line="782"/>
         <source>Volume line</source>
         <translation>Строка громкости</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="149"/>
-        <location filename="../../src/mainwindow.cpp" line="784"/>
+        <location filename="../../src/mainwindow.cpp" line="157"/>
+        <location filename="../../src/mainwindow.cpp" line="792"/>
         <source>Voice selection</source>
         <translation>Выбор голоса</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="153"/>
-        <location filename="../../src/mainwindow.cpp" line="792"/>
+        <location filename="../../src/mainwindow.cpp" line="161"/>
+        <location filename="../../src/mainwindow.cpp" line="800"/>
         <source>Instrument line</source>
         <translation>Строка инструмента</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="150"/>
-        <location filename="../../src/mainwindow.cpp" line="802"/>
+        <location filename="../../src/mainwindow.cpp" line="158"/>
+        <location filename="../../src/mainwindow.cpp" line="810"/>
         <source>Instrument selection</source>
         <translation>Выбор инструмента</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="23"/>
+        <location filename="../../src/mainwindow.cpp" line="27"/>
         <source>Select a .musicxml file</source>
         <translation>Выбор .musicxml файла</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="48"/>
+        <location filename="../../src/mainwindow.cpp" line="56"/>
         <source>Oops!</source>
         <translation>Пук-среньк!</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="49"/>
+        <location filename="../../src/mainwindow.cpp" line="57"/>
         <source>An error occurred. The file was not found, has an incorrect extension, or contains an error.</source>
         <translation>Произошла ошибка. Файл не найден, либо имеет неправильное расширение, либо содержит ошибку.</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="50"/>
-        <location filename="../../src/mainwindow.cpp" line="687"/>
+        <location filename="../../src/mainwindow.cpp" line="58"/>
         <location filename="../../src/mainwindow.cpp" line="695"/>
-        <location filename="../../src/mainwindow.cpp" line="709"/>
-        <location filename="../../src/mainwindow.cpp" line="722"/>
-        <location filename="../../src/mainwindow.cpp" line="742"/>
+        <location filename="../../src/mainwindow.cpp" line="703"/>
+        <location filename="../../src/mainwindow.cpp" line="717"/>
+        <location filename="../../src/mainwindow.cpp" line="730"/>
+        <location filename="../../src/mainwindow.cpp" line="750"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="129"/>
-        <location filename="../../src/mainwindow.cpp" line="830"/>
+        <location filename="../../src/mainwindow.cpp" line="22"/>
+        <location filename="../../src/mainwindow.cpp" line="137"/>
+        <location filename="../../src/mainwindow.cpp" line="838"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="130"/>
-        <location filename="../../src/mainwindow.cpp" line="832"/>
+        <location filename="../../src/mainwindow.cpp" line="22"/>
+        <location filename="../../src/mainwindow.cpp" line="138"/>
+        <location filename="../../src/mainwindow.cpp" line="840"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="131"/>
-        <location filename="../../src/mainwindow.cpp" line="835"/>
+        <location filename="../../src/mainwindow.cpp" line="139"/>
+        <location filename="../../src/mainwindow.cpp" line="843"/>
         <source>Close</source>
         <translation>Закрыть</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="132"/>
-        <location filename="../../src/mainwindow.cpp" line="839"/>
+        <location filename="../../src/mainwindow.cpp" line="140"/>
+        <location filename="../../src/mainwindow.cpp" line="847"/>
         <source>Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="134"/>
-        <location filename="../../src/mainwindow.cpp" line="847"/>
+        <location filename="../../src/mainwindow.cpp" line="142"/>
+        <location filename="../../src/mainwindow.cpp" line="855"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="135"/>
-        <location filename="../../src/mainwindow.cpp" line="849"/>
+        <location filename="../../src/mainwindow.cpp" line="143"/>
+        <location filename="../../src/mainwindow.cpp" line="857"/>
         <source>Language</source>
         <translation>Язык интерфейса</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="850"/>
+        <location filename="../../src/mainwindow.cpp" line="858"/>
         <source>Русский</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="854"/>
+        <location filename="../../src/mainwindow.cpp" line="862"/>
         <source>English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="136"/>
-        <location filename="../../src/mainwindow.cpp" line="867"/>
+        <location filename="../../src/mainwindow.cpp" line="144"/>
+        <location filename="../../src/mainwindow.cpp" line="875"/>
         <source>Drum kit configurator</source>
         <translation>Конфигуратор ударных инструментов</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="137"/>
-        <location filename="../../src/mainwindow.cpp" line="870"/>
+        <location filename="../../src/mainwindow.cpp" line="145"/>
+        <location filename="../../src/mainwindow.cpp" line="878"/>
         <source>Line name settings</source>
         <translation>Настройка названия строк</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="138"/>
-        <location filename="../../src/mainwindow.cpp" line="873"/>
+        <location filename="../../src/mainwindow.cpp" line="146"/>
+        <location filename="../../src/mainwindow.cpp" line="881"/>
         <source>Debug information</source>
         <translation>Отладочная информация</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="139"/>
-        <location filename="../../src/mainwindow.cpp" line="875"/>
+        <location filename="../../src/mainwindow.cpp" line="147"/>
+        <location filename="../../src/mainwindow.cpp" line="883"/>
         <source>Version</source>
         <translation>Версия</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="141"/>
-        <location filename="../../src/mainwindow.cpp" line="876"/>
+        <location filename="../../src/mainwindow.cpp" line="149"/>
+        <location filename="../../src/mainwindow.cpp" line="884"/>
         <source>Before 2.4 (deprecated)</source>
         <translation>До 2.4 (устаревшая)</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="140"/>
-        <location filename="../../src/mainwindow.cpp" line="877"/>
+        <location filename="../../src/mainwindow.cpp" line="148"/>
+        <location filename="../../src/mainwindow.cpp" line="885"/>
         <source>After 2.4 (including)</source>
         <translation>После 2.4 (включая)</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="143"/>
-        <location filename="../../src/mainwindow.cpp" line="895"/>
+        <location filename="../../src/mainwindow.cpp" line="151"/>
+        <location filename="../../src/mainwindow.cpp" line="903"/>
         <source>Help</source>
         <translation>Справка</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="144"/>
-        <location filename="../../src/mainwindow.cpp" line="897"/>
+        <location filename="../../src/mainwindow.cpp" line="152"/>
+        <location filename="../../src/mainwindow.cpp" line="905"/>
         <source>Manual</source>
         <translation>Руководство</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="145"/>
-        <location filename="../../src/mainwindow.cpp" line="898"/>
+        <location filename="../../src/mainwindow.cpp" line="153"/>
+        <location filename="../../src/mainwindow.cpp" line="906"/>
         <source>About</source>
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="899"/>
+        <location filename="../../src/mainwindow.cpp" line="907"/>
         <source>About Qt</source>
         <translation>About Qt</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="148"/>
-        <location filename="../../src/mainwindow.cpp" line="766"/>
+        <location filename="../../src/mainwindow.cpp" line="156"/>
+        <location filename="../../src/mainwindow.cpp" line="774"/>
         <source>Party selection</source>
         <translation>Выбор партии</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="99"/>
+        <location filename="../../src/mainwindow.cpp" line="107"/>
         <source>Survivalcraft notes translator: - %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="146"/>
-        <location filename="../../src/mainwindow.cpp" line="173"/>
+        <location filename="../../src/mainwindow.cpp" line="154"/>
+        <location filename="../../src/mainwindow.cpp" line="181"/>
         <source>About QT</source>
         <translation>О Qt</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="180"/>
-        <location filename="../../src/mainwindow.cpp" line="1175"/>
+        <location filename="../../src/mainwindow.cpp" line="188"/>
+        <location filename="../../src/mainwindow.cpp" line="1190"/>
         <source>Survivalcraft notes translator:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="687"/>
+        <location filename="../../src/mainwindow.cpp" line="695"/>
         <source>Failed to open ZIP file.</source>
         <translation>Не удалось открыть ZIP файл.</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="695"/>
+        <location filename="../../src/mainwindow.cpp" line="703"/>
         <source>No files in the archive.</source>
         <translation>В архиве нет файлов.</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="709"/>
+        <location filename="../../src/mainwindow.cpp" line="717"/>
         <source>Failed to read the file in the archive.</source>
         <translation>Не удалось прочитать файл в архиве.</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="722"/>
+        <location filename="../../src/mainwindow.cpp" line="730"/>
         <source>Failed to extract the file.</source>
         <translation>Не удалось извлечь файл.</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="742"/>
+        <location filename="../../src/mainwindow.cpp" line="750"/>
         <source>Failed to find the file with the archive name inside the archive.</source>
         <translation>Не удалось найти файл с именем архива в архиве.</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1140"/>
+        <location filename="../../src/mainwindow.cpp" line="1155"/>
         <source>1. Bell</source>
         <translation>1. Колокольчик</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1141"/>
+        <location filename="../../src/mainwindow.cpp" line="1156"/>
         <source>2. Organ</source>
         <translation>2. Óрган</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1142"/>
+        <location filename="../../src/mainwindow.cpp" line="1157"/>
         <source>3. Ping</source>
         <translation>3. 8 бит</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1143"/>
+        <location filename="../../src/mainwindow.cpp" line="1158"/>
         <source>4. Strings</source>
         <translation>4. Струнный инструмент</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1144"/>
+        <location filename="../../src/mainwindow.cpp" line="1159"/>
         <source>5. Trumpet</source>
         <translation>5. М̶̶̶е̶̶̶д̶̶̶н̶̶̶а̶̶̶я̶̶̶ труба</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1145"/>
+        <location filename="../../src/mainwindow.cpp" line="1160"/>
         <source>6. Voice</source>
         <translation>6. Вокальное ду</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1146"/>
+        <location filename="../../src/mainwindow.cpp" line="1161"/>
         <source>7. Piano</source>
         <translation>7. Фортепиано</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1147"/>
+        <location filename="../../src/mainwindow.cpp" line="1162"/>
         <source>8. Piano Sustain</source>
         <translation>8. Удлинённое фортепиано</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1148"/>
+        <location filename="../../src/mainwindow.cpp" line="1163"/>
         <source>10. Bass</source>
         <translation>10. Бас-гитара</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1159"/>
+        <location filename="../../src/mainwindow.cpp" line="1174"/>
         <source>1. Bell (The first octave is broken, see manual)</source>
         <translation>1. Колокольчик (сломана октава, см. руководство)</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1227"/>
+        <location filename="../../src/mainwindow.cpp" line="1243"/>
         <source>Notes </source>
         <translation>Ноты </translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1258"/>
+        <location filename="../../src/mainwindow.cpp" line="1274"/>
         <source>Octaves </source>
         <translation>Октавы </translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1302"/>
+        <location filename="../../src/mainwindow.cpp" line="1318"/>
         <source>Instruments </source>
         <translation>Инструменты </translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1333"/>
+        <location filename="../../src/mainwindow.cpp" line="1349"/>
         <source>Volume </source>
         <translation>Громкость </translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1381"/>
+        <location filename="../../src/mainwindow.cpp" line="1397"/>
         <source>Warning</source>
         <translation>Предупреждение</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1383"/>
+        <location filename="../../src/mainwindow.cpp" line="1399"/>
         <source>Failed to load the manual! Most likely, it was not downloaded.&lt;br&gt;Please visit the </source>
         <translation>Не удалось загрузить справку! Скорее всего она не была скачана.&lt;br&gt;Посетите </translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="1384"/>
+        <location filename="../../src/mainwindow.cpp" line="1400"/>
         <source>releases page</source>
         <translation>страницу релизов</translation>
     </message>
