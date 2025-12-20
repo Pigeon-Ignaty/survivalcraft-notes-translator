@@ -146,7 +146,11 @@ In this section, all major changes, additions, and deletions in the code are rec
 	* Release preparation: added an icon to the executable file, migrated the project to Qt 5.15.2, fixed the help window not opening in the release version. Also, clicking a link in the help window now opens the website in the browser.
  * 11th November 2025
  	* Fixed a bug: the instruments octaves were displayed incorrectly. Also, the bell's octave range started from the first broken octave.
-
+* 13th November 2025
+ 	* Release of the first version of the application, 1.0.0.
+* 20th December 2025
+	* Application testing has been added. Unfortunately, it was not possible to use the built-in testing module due to its 5-minute time limit. Therefore, tests had to be written manually by interacting with the application’s slots. Since the translation logic is tied to the GUI and the entire process runs in the GUI thread, full testing takes about 30 minutes. In addition, the resulting output file is very large, the largest being around 12,000 lines. It is necessary to redesign the application architecture by separating the presentation layer (GUI) from the translation logic. The test itself includes opening a corrupted file and translating several works.
+   
 ## Build Requirements
 
 To build the project from source, the following tools and libraries are required:
@@ -303,8 +307,12 @@ ___
 	* Добавлен перевод на английский язык (все окна будут динамически переводиться после смены языка пользователем, кроме содержимого справки и сообщений в консоли). Переделано сохранение и восстановление настроек в ini-файле: при первом запуске создаётся ini-файл с настройками по умолчанию (язык определяется по системным настройкам пользователя, если язык не поддерживается, используется английский по умолчанию). Также при первом запуске приложение открывается в основном окне размером 60% от экрана. Переименованы названия приложения на SCNotesTranslator и Survivalcraft Notes Translator. Добавлен rc-файл для задания свойств исполняемого файла (например, версии, иконки и информации о продукте), которые отображаются в свойствах exe.
 * 18.10.25
 	* Подготовка к выпуску. Добавлена иконка к запускному файлу, перенос проекта на qt 5.15.2, исправил открытие окна справки в release версии, также при клике на ссылку в справке будет открываться сайт в браузере.
- * 11.11.25
+* 11.11.25
  	* Исправлена ошибка: неправильно выводилась строка инструментов (для колокольчика — 0, хотя должно быть 1). Также у колокольчика диапазон октав начинался с первой ломанной октавы.
+* 13.11.25
+ 	* Выпуск первой версии приложения 1.0.0.
+* 20.12.25
+	* Добавлено тестирование приложения. К сожалению, не удалось воспользоваться встроенным модулем тестирования, так как в нём существует ограничение по времени выполнения (5 минут). Поэтому тесты пришлось писать вручную, путём взаимодействия со слотами приложения. Из-за того, что логика перевода связана с GUI и весь процесс выполняется в GUI-потоке, полное тестирование занимает около 30 минут. Кроме того, результирующий файл получается очень большим (самый крупный — около 12 тысяч строк). Необходимо переписать архитектуру приложения, разделив представление (GUI) и логику перевода. Сам тест включает в себя открытие повреждённого файла и перевод нескольких произведений.
 ---
 ## Требования для сборки проекта
 
