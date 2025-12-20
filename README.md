@@ -4,7 +4,7 @@
 
 <p align="center">
 <img src="https://img.shields.io/badge/Framework-Qt5%2FC%2B%2B-green?style=flat-square&logoColor=red"">
-<a href="https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/releases"><img src="https://img.shields.io/badge/Stable%20Version%20-%20no-red?style=flat-square&logoColor=red"></a>
+<a href="https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/releases"><img src="https://img.shields.io/badge/Stable%20Version-1.0.0-red?style=flat-square"></a>
 <a href="https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/blob/gui/LICENSE"><img src="https://img.shields.io/badge/License%20-GPL%20%20-blue?style=flat-square&logoColor=red"></a>
 <img src="https://img.shields.io/badge/OS%20-%20Windows%20-%20%238932a8?style=flat-square">
 </p>
@@ -12,7 +12,7 @@
 # About 📔
 Survivalcraft Notes Translator is a program that reads musicxml files, extracts the found parts and voices, and translates notes and octaves from the selected voice into the format of the sound generator in Survivalcraft.
 
-## Installation and Launch
+## Installation and Launch<a name="installation-and-launch-en"></a>
 
 ### Operating System
 - Windows 7 SP1 / Windows 8.1 / Windows 10 / Windows 11 (all **64-bit**)  
@@ -172,9 +172,9 @@ ___
 # RU Survivalcraft Notes Translator 
 Survivalcraft Notes Translator - это программа, которая считывает файлы musicxml, извлекает найденные партии и голоса и переводит ноты и октавы из выбранного голоса в формат звукового генератора в Survivalcraft.
 
-## Установка и запуск 🔧
+## Установка и запуск <a name="installation-and-launch-ru"></a>
 
-### 🖥️ Операционная система
+### Операционная система
 - Windows 7 SP1 / Windows 8.1 / Windows 10 / Windows 11 (все — **64-бит**)  
 - Установлен [**Microsoft Visual C++ 2019 Redistributable (x64)**](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)  
 - Программа **portable** — установка **не требуется**
