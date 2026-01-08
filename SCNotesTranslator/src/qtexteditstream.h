@@ -29,4 +29,18 @@ private:
     QTextEditStream textEditStream;
 };
 
+class NullStreamBuf : public std::streambuf {
+protected:
+    int overflow(int c) override {
+        return c;
+    }
+};
+
+class NullOStream : public std::ostream {
+public:
+    NullOStream() : std::ostream(&m_buf) {}
+private:
+    NullStreamBuf m_buf;
+};
+
 #endif // QTEXTEDITSTREAM_H

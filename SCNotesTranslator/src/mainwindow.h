@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 #include <QMainWindow>
 #include "tinyxml2.h"
-#include "miniz.h"
 #include <QString>
 #include <QFile>
 #include "QFileDialog"
@@ -27,6 +26,8 @@
 #include <QLibrary>
 #include <QTranslator>
 #include <QApplication>
+#include "MusicXmlReader.h"
+#include "TranslateMusic.h"
 
 using namespace std;
 using namespace tinyxml2;
@@ -70,31 +71,31 @@ class MainWindow : public QMainWindow
     };
 
     //Октавы и инcтрументы до 2.4
-    const QMap<Instrument/*номер инструмента*/, OctaveRange/*мин. октава, макс. октава, сдвиг*/>
-    m_instrOctRangeOld{
-        {Bell,{3, 4, 1}},
-        {Organ,{3, 5, 0}},
-        {Ping,{3, 5, 0}},
-        {Strings,{2, 4, 0}},
-        {Trumpet,{2, 4, 0}},
-        {Voice,{3, 5, 0}},
-        {Piano,{2, 5, 0}},
-        {PianoLong,{2, 5, 0}}
-    };
+    // const QMap<Instrument/*номер инструмента*/, OctaveRange/*мин. октава, макс. октава, сдвиг*/>
+    // m_instrOctRangeOld{
+    //     {Bell,{3, 4, 1}},
+    //     {Organ,{3, 5, 0}},
+    //     {Ping,{3, 5, 0}},
+    //     {Strings,{2, 4, 0}},
+    //     {Trumpet,{2, 4, 0}},
+    //     {Voice,{3, 5, 0}},
+    //     {Piano,{2, 5, 0}},
+    //     {PianoLong,{2, 5, 0}}
+    // };
 
-    //Октавы и интрументы после 2.4
-    const QMap<Instrument/*номер инструмента*/, OctaveRange/*мин. октава, макс. октава, сдвиг*/>
-    m_instrOctRangeNew{
-        {Bell,{2, 5, 0}},
-        {Organ,{3, 5, 0}},
-        {Ping,{3, 6, 0}},
-        {Strings,{2, 5, 0}},
-        {Trumpet,{2, 5, 0}},
-        {Voice,{3, 6, 0}},
-        {Piano,{2, 5, 0}},
-        {PianoLong,{2, 5, 0}},
-        {Bass,{2, 5, 0}},
-    };
+    // //Октавы и интрументы после 2.4
+    // const QMap<Instrument/*номер инструмента*/, OctaveRange/*мин. октава, макс. октава, сдвиг*/>
+    // m_instrOctRangeNew{
+    //     {Bell,{2, 5, 0}},
+    //     {Organ,{3, 5, 0}},
+    //     {Ping,{3, 6, 0}},
+    //     {Strings,{2, 5, 0}},
+    //     {Trumpet,{2, 5, 0}},
+    //     {Voice,{3, 6, 0}},
+    //     {Piano,{2, 5, 0}},
+    //     {PianoLong,{2, 5, 0}},
+    //     {Bass,{2, 5, 0}},
+    // };
     QMap<Instrument, OctaveRange> m_instrOctRangeCurrent;
 
     struct Language {
@@ -109,6 +110,13 @@ private:
     void setupUi();// Собираем UI
     void initializeSettings(); //чтение ini настроек
     void loadHelpLibrary(); //Ф-я чтения dll
+
+    void showTranslation();
+    void show_notes();
+    void show_octaves();
+    void show_instruments(); //вывод допольнительных строк инструментов
+    void show_volumes();
+
 public slots:
 
     void slotOpenMenuConsole(bool checked);//Окно создание/скрытия или открытия окна консоли
@@ -117,6 +125,7 @@ public slots:
 
     void slotOpenFile(QString testPathFile = "");//Нажатие кнопки Открыть
     void slotCloseFile();//Нажатие кнопки Закрыть
+    void slotGetTranslation(QVector <int> &converted_notes, QVector <int> &converted_octaves); //Получаем перевод
 
     void slotComboBoxPartsIndexChanged(int index);//Слот изменения партии
     void slotComboBoxVoicesIndexChanged(const QString &arg1);//Слот изменения голосов
@@ -129,7 +138,7 @@ public slots:
 
     void slotOpenManual();
     void slotChangeLanguage(QAction *action);//Слот смены языка
-    void slotChangedVersion();
+    void slotChangedVersion(bool checked);
     void slotConsoleClose();
 public:
     void retranslateUI();
@@ -146,7 +155,7 @@ private:
     QTextEdit *m_translatedArea = nullptr;
 
     // Комбобоксы
-    QComboBox *m_comboPartySelection = nullptr;
+    QComboBox *m_comboPartSelection = nullptr;
     QComboBox *m_comboVoiceSelection = nullptr;
     QComboBox *m_comboInstrumentSelection = nullptr;
 
@@ -194,6 +203,8 @@ private:
     QWidget *m_helpWidget = nullptr; //окно справки
     QTranslator *m_translator = nullptr;
 
+    MusicXmlReader *m_xmlReader = nullptr;
+    TranslateMusic *m_musicTranslator = nullptr;
     //данные из класса  MusicXMLReader
     XMLDocument doc; // объект класса XML
     bool successOpenFile = false; //флаг успешного открытия файла
@@ -271,10 +282,7 @@ private:
     void convertToSequence(QVector<int>&, QVector<float>&, QVector<int>&, NoteType type);//вывод послед нот и октав
     void convert_to_sequence_percussion(QVector <string>&, QVector<float>&);
     void show_information_about_composition(QVector<float>& duration, int fraction_numerator, int denominator_fraction, int bpm);
-    void show_notes(QVector <int>& converted_notes);
-    void show_octaves(QVector <int>& converted_octaves);
-    void show_instruments(); //вывод допольнительных строк инструментов
-    void show_volumes();//индекс для определения ударных, если равно 1
+
     int switch_hex_notes(char ch, int semitone); //перевод значений в 16 формат survivalcraft
     void print_amount(int note, int duration, int league, QVector <int>& notes_or_octaves); //формирование последовательности нот или октав с учётом длительности и лиг
 
@@ -285,9 +293,14 @@ private:
     void saveSettings(QSettings & settings);
     void updateInstrumentsComboBox();
 
+    void fillComboBoxParties();
+    void fillComboBoxVoices();
+    void tryTranslate();// Валидация перед переводом
     //Данные для работы теста
     friend class Test_SCNotesTranslator;
 signals:
     void signalBadXmlFile();//Открыт некорректный файл
+
+
 };
 #endif // MAINWINDOW_H

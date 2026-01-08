@@ -2,11 +2,12 @@
     <qresource prefix="/">
         <file>xml/Bad_Piggies_Theme.musicxml</file>
         <file>xml/Drums.mxl</file>
+        <file>xml/brokenXml.musicxml</file>
         <file>xml/AllNotes_test.musicxml</file>
         <file>xml/SUBWAY SURFERS (Main Theme).musicxml</file>
         <file>xml/voices.musicxml</file>
-    </qresource>
-    <qresource prefix="/">
+        <file>xml/Couldn't read file.mxl</file>
+
         <file>results/AllNotes_test_VERIFIED.txt</file>
         <file>results/Bad_Piggies_Theme_VERIFIED.txt</file>
         <file>results/Drums_VERIFIED.txt</file>

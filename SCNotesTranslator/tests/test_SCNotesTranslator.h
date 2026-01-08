@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include "mainwindow.h"
+#include "MusicXmlReader.h"
 #include <QAtomicInt>
 #include <QTimer>
 #include <QThread>
@@ -18,6 +19,11 @@
 На весь тест уходит 30 минут, поэтому требуется переписать архитектуру приложения.
 ----------------------------------------------------*/
 
+struct TestResult{
+    bool ok;
+    QString message;
+};
+
 class Worker;
 
 class Test_SCNotesTranslator :public QObject
@@ -29,17 +35,20 @@ public:
 
     void run();//Запуск всех тестов
 private slots:
-    bool testErrorXml(); //Проверяем ошибочный файл
+    bool testsParsingFilesTranslate(); //Тест метода load из MusicXmlReader
     bool testCheckTranslation();//Тест проверки перевода на нескольких xml
 private:
+    bool createTempFile(const QString content = "", const QString& extension = "musicxml"); //Создание временного файла
     bool translateFile(QString file); //Переводим каждый xml файл
 
     template <typename Signal>
     bool waitForSignal(Signal signal, int timeoutSec = 10);//Ф-я для отслеживания сигналов для тестирования
     QString displayTime(); //Ф-я вывода времени из другого потока
     MainWindow *m_testApp = nullptr; //Тестируемое приложение
+    MusicXmlReader *m_textXMLReader = nullptr;
     QThread *m_timerThread = nullptr;
     Worker *m_worker = nullptr; //Класс для запуска и оставноки таймера
+    QVector<TestResult> results;
 
     bool compareFiles(QString toCheckFileName, QString verifiedFileName);//Сравниваем тестируемый и проверенный файлы
 };

@@ -14,104 +14,61 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-
+    delete m_musicTranslator;
 }
 
 void MainWindow::slotOpenFile(QString testPathFile) //открытие файла
 {
     QSettings settings("config.ini", QSettings::IniFormat);
-    QString path_to_file;
+    QString pathToFile;
     if(testPathFile.isEmpty())//Если не тест, то выбираем через проводник
-        path_to_file = QFileDialog::getOpenFileName(this,tr("Select a .musicxml file"),settings.value("UI/LastOpenFilePath","").toString(),"*.musicxml *.mxl");
+        pathToFile = QFileDialog::getOpenFileName(this,tr("Select a .musicxml file"),
+                                                  settings.value("UI/LastOpenFilePath","").toString(),
+                                                  "*.musicxml *.mxl");
     else
-        path_to_file = testPathFile; //Иначе тест и получает путь из теста
+        pathToFile = testPathFile; //Иначе тест и получает путь из теста
 
-    if(path_to_file.isEmpty()){
+    if(pathToFile.isEmpty())
         return;
-    }
-    if(!path_to_file.isEmpty()){
-        settings.setValue("UI/LastOpenFilePath", path_to_file);
-        *sout << "Последний сохраненный путь:" << path_to_file.toUtf8().constData() << endl;
-        }
 
-    QFileInfo extension(path_to_file); //получаем расширение файла
-    QByteArray xmlFile;
-    if(extension.suffix() == "mxl")//если архив, то распаковка
-    {
-        xmlFile = parseXml(path_to_file);
-    }
-    else {//иначе запишем содержимое файла в QByteArray
-        QFile file(path_to_file);
-        if(file.open(QIODevice::ReadOnly)){
-            xmlFile = file.readAll();
-            file.close();
-        }
-    }
-    tinyxml2::XMLError error = doc.Parse(xmlFile.constData(),xmlFile.size());
-    if (!error == tinyxml2::XML_SUCCESS) {//ошибка открытия
-        QMessageBox errorMessage;
-        errorMessage.setIcon(QMessageBox::Critical); // Установка иконки ошибки
-        errorMessage.setText(tr("Oops!"));
-        errorMessage.setInformativeText(tr("An error occurred. The file was not found, has an incorrect extension, or contains an error."));
-        errorMessage.setWindowTitle(tr("Error"));
-        errorMessage.exec();
-        *sout <<"Ошибка открытия " << doc.Error()<< endl;
-        slotCloseFile();
-        emit signalBadXmlFile();
+    QFileInfo fileExtension(pathToFile);
+    if(fileExtension.suffix().toLower() != "mxl" && fileExtension.suffix().toLower() != "musicxml"){
+        QMessageBox::critical(this, tr("Error"),tr("The file has an unsupported extension!\n"
+                                                    "Acceptable: .xml or .mxl"));
         return;
     }
 
-    else{//если успех
-        slotCloseFile();
-        m_comboPartySelection->setEnabled(true);// активация списков
-        m_comboVoiceSelection->setEnabled(true);
-        m_checkInstrumentString->setEnabled(true);
-        m_checkVolumeString->setEnabled(true);
+    slotCloseFile(); //Очищаем данные от предыдущего файла, если он был открыт
+    settings.setValue("UI/LastOpenFilePath", pathToFile);
+    *sout << "Последний сохраненный путь: " << pathToFile.toUtf8().constData() << endl;
 
-        XMLElement* pRootElement = doc.RootElement(); // корневой каталог
-        if (nullptr != pRootElement) { // если не пустой
-            XMLElement* credit = pRootElement->FirstChildElement("credit"); // спускаемся в credit
-                while (credit) {
-                    XMLElement* credit_type_tag = credit->FirstChildElement("credit-type"); // в цикле вытаскиваем тип
-                    XMLElement* credit_words_tag = credit->FirstChildElement("credit-words"); // в цикле вытаскиваем имя типа
-                    if (nullptr != credit_type_tag && credit_words_tag != nullptr) { // если не пустой
-                        *sout << credit_type_tag->GetText() << ": " << credit_words_tag->GetText() << "\t"; // вывод автора и названия
-                    }
-                    credit = credit->NextSiblingElement("credit"); //след элемент
-                }
-                *sout << "Вывод следующих партий в музыкальной композиции: " << endl;
-                int scorePartCount = 0;
-                XMLElement* part_list = pRootElement->FirstChildElement("part-list");
-                if (part_list != nullptr) {
-                    for (XMLElement* score_part = part_list->FirstChildElement("score-part");
-                        score_part != nullptr; score_part = score_part->NextSiblingElement("score-part"))
-                    {
-                        *sout << "ID: " << score_part->Attribute("id") << "\t";
-                        XMLElement* part_name = score_part->FirstChildElement("part-name");
-                        if (part_name != nullptr) {
-                            *sout << "Название партии: " << string(part_name->GetText()) << endl;
-                            MusicalParts.push_back(QString(part_name->GetText())); //добавление названий партии в массив
-                            m_comboPartySelection->addItem(QString(score_part->Attribute("id")) + " " + QString(part_name->GetText()));//добавление название партии в ComboBox
-                            IdParts.push_back(QString(score_part->Attribute("id"))); //добавление id партии
-                        }
-
-                        scorePartCount++;
-                    }
-                }
-                m_comboPartySelection->setMaxVisibleItems(m_comboPartySelection->count());     // Установка максимального количества видимых элементов
-                *sout << "scorePartCount: " << scorePartCount << endl;
-                m_closeAction->setEnabled(true);
-                QFileInfo fileInfo(path_to_file);//получение название файла
-                QString fileName = fileInfo.fileName();
-                setWindowTitle(tr("Survivalcraft notes translator: - %1").arg(fileName));//добавление в шапку
-                successOpenFile = true;
-
-            }
+    if(!m_xmlReader->load(pathToFile)){//Загрузка файла
+        QMessageBox::critical(this, tr("Error"), m_xmlReader->getErrorString());
+        return;
     }
-    m_comboPartySelection->blockSignals(false);
-    m_comboVoiceSelection->blockSignals(false);
-    m_checkInstrumentString->blockSignals(false);
-    slotComboBoxPartsIndexChanged(m_comboPartySelection->currentIndex());
+    if(!m_xmlReader->parseParties()){//Анализ партий
+        QMessageBox::critical(this, tr("Error"), tr("There are no parties in the file"));
+        return;
+    }
+
+    auto parties = m_xmlReader->getMusicalParts();//Получаем найденные партии
+    auto part = parties.first(); //Берём первую партию
+    if(!m_xmlReader->parseVoices(part.id)){//Находим все голоса в партии
+        QMessageBox::critical(this, tr("Error"), tr("There are no voices in the part"));
+        return;
+    }
+
+    m_closeAction->setEnabled(true);
+    m_checkVolumeString->setEnabled(true);
+    m_checkInstrumentString->setEnabled(true);
+
+    QFileInfo fileInfo(pathToFile);
+    QString fileName = fileInfo.fileName();
+    setWindowTitle(tr("Survivalcraft notes translator: - %1").arg(fileName));// Меняем название
+
+    fillComboBoxParties(); //Заполняем новыми партиями
+    fillComboBoxVoices(); //Заполняем новыми голосами
+    tryTranslate(); //Переводим
 }
 
 void MainWindow::slotOpenMenuConsole(bool checked)
@@ -152,7 +109,7 @@ void MainWindow::retranslateUI()
     m_aboutApplicationAction->setText(tr("About"));
     m_aboutQtAction->setText(tr("About QT"));
     //Перевод ui элементов
-    m_labelPartySelection->setText(tr("Party selection"));
+    m_labelPartySelection->setText(tr("Part selection"));
     m_labelVoiceSelection->setText(tr("Voice selection"));
     m_labelInstrumentSelection->setText(tr("Instrument selection"));
 
@@ -180,22 +137,23 @@ void MainWindow::slotOpenAboutQT()//о версии qt
     QMessageBox::aboutQt(&aboutQt,tr("About QT"));
 }
 
-void MainWindow::slotCloseFile()//закрытие через menu bar
+void MainWindow::slotCloseFile()
 {
     m_openAction ->setEnabled(true);
     m_closeAction->setEnabled(false);
     setWindowTitle(tr("Survivalcraft notes translator:"));
-    m_comboPartySelection->blockSignals(true);
-    m_comboVoiceSelection->blockSignals(true);
-        if (m_comboPartySelection && m_comboPartySelection->count() > 0) {
-        m_comboPartySelection->clear();
-    }
-
-    if (m_comboVoiceSelection && m_comboVoiceSelection->count() > 0) {
-        m_comboVoiceSelection->clear();
-    }
-    m_comboPartySelection->setEnabled(false);// и блокировка
+    m_comboPartSelection->blockSignals(true);
+    m_comboVoiceSelection->blockSignals(true);    
+    m_comboPartSelection->clear();
+    m_comboVoiceSelection->clear();
+    m_comboPartSelection->setEnabled(false);
     m_comboVoiceSelection->setEnabled(false);
+    m_comboPartSelection->blockSignals(false);
+    m_comboVoiceSelection->blockSignals(false);
+
+    m_checkVolumeString->setEnabled(false);
+    m_checkInstrumentString->setEnabled(false);
+
     IdParts.clear();
     MusicalParts.clear();
     Voices.clear();
@@ -216,54 +174,35 @@ void MainWindow::slotCloseFile()//закрытие через menu bar
     v_duration.clear();
     v_instruments.clear();
     m_translatedArea->clear();
-    *sout << "Файл закрыт" << endl;
+}
+
+void MainWindow::slotGetTranslation(QVector<int> &converted_notes, QVector<int> &converted_octaves)
+{
+    converted_notes_sequence = converted_notes;
+    converted_octaves_sequence = converted_octaves;
+
+    showTranslation();
 }
 
 void MainWindow::slotComboBoxPartsIndexChanged(int index) //если был выбрана какая-то партия, то вывести для неё все голоса
 {
-    if(IdParts.isEmpty())
-        return;
-    m_comboVoiceSelection->blockSignals(true);
-    m_comboVoiceSelection->clear();
-    m_comboVoiceSelection->blockSignals(false);
-    QByteArray byteArray = IdParts[index].toUtf8(); //перевод в const char*
-    const char* NamePart = byteArray.constData();
-    XMLElement* measure_tag = nullptr;
+    // if(index == -1)
+    //     return;
+    // //Читаем все голоса в партии
+    // auto currentPart = m_comboPartSelection->currentData().toString();
+    // m_xmlReader->parseVoices(currentPart);
 
-    XMLElement* pRootElement = doc.RootElement(); // корневой элемент
-    if (pRootElement != nullptr) { // проверка на пустоту
-        XMLElement* part_id_tag = pRootElement->FirstChildElement("part");
-        while (part_id_tag != nullptr) {
-            const char* partId = part_id_tag->Attribute("id");
-            if (partId != nullptr && std::string(partId) == NamePart) {
-                measure_tag = part_id_tag->FirstChildElement("measure");
-                while (measure_tag != nullptr) {
-                    XMLElement* note_tag = measure_tag->FirstChildElement("note");
-                    while (note_tag != nullptr) {
-                        XMLElement* voice_tag = note_tag->FirstChildElement("voice");
-                        if (voice_tag != nullptr) {
-                            Voices.push_back(voice_tag->GetText());
-                        }
-                        note_tag = note_tag->NextSiblingElement("note");
-                    }
-                    measure_tag = measure_tag->NextSiblingElement("measure");
-                }
-                break; // Выход из цикла, если найдена выбранная партия
-            }
-            part_id_tag = part_id_tag->NextSiblingElement("part");
-        }
-    }
-    //сортировка голосов
-    Voices.removeDuplicates();
-    sort(Voices.begin(), Voices.end());
-    *sout << "Голоса, обнаруженные в партии" << std::endl;
-    m_comboVoiceSelection->blockSignals(true);
-    for (const QString& v : Voices) {
-        *sout << v.toStdString() << endl;
-        m_comboVoiceSelection->addItem(v);
-    }
-    m_comboVoiceSelection->blockSignals(false);
-    slotComboBoxInstrumentsIndexChanged(0);
+    // //Очищаем combobox с голосами и заполняем
+    // m_comboVoiceSelection->blockSignals(true);
+    // m_comboVoiceSelection->clear();
+
+    // m_comboVoiceSelection->blockSignals(true);
+    // for (auto & voice : m_xmlReader->getVoicesFromPart(currentPart)) {
+    //     m_comboVoiceSelection->addItem(voice);
+    // }
+    // m_comboVoiceSelection->setEnabled(true);
+    // m_comboVoiceSelection->blockSignals(false);
+    // slotComboBoxInstrumentsIndexChanged(0);
 }
 
 void MainWindow::slotComboBoxVoicesIndexChanged(const QString &arg1) //если произошёл выбор голоса, то сразу перевести
@@ -287,7 +226,7 @@ void MainWindow::slotComboBoxVoicesIndexChanged(const QString &arg1) //если 
     m_translatedArea->clear();
     if(IdParts.isEmpty())
         return;
-    QByteArray byteArray = IdParts[m_comboPartySelection->currentIndex()].toUtf8(); //перевод в const char*
+    QByteArray byteArray = IdParts[m_comboPartSelection->currentIndex()].toUtf8(); //перевод в const char*
     const char* NamePart = byteArray.constData();
     XMLElement* pRootElement = doc.RootElement(); // корневой каталог
         if (nullptr != pRootElement) { // если не пустой
@@ -597,14 +536,14 @@ int MainWindow::fullTranslate()
          convertToSequence(converted_notes, v_duration, v_league, NoteType::Pitch);// перевод в последовательность нот в зависимости от длительности
          convertToSequence(converted_octaves, v_duration, v_league, NoteType::Octave);//перевод в последовательность октав в зависимости от длительности
          //show_information_about_composition(v_duration, beats, beat_type, bpm);//рекомендуемая частота генератора, не работает правильно
-         show_notes(converted_notes_sequence); //вывод нот с делением на строки длиной 256 символов
-         show_octaves(converted_octaves_sequence);//вывод октав с делением на строки длиной 256 символов
+         // show_notes(converted_notes_sequence); //вывод нот с делением на строки длиной 256 символов
+         // show_octaves(converted_octaves_sequence);//вывод октав с делением на строки длиной 256 символов
          show_instruments();
          show_volumes(); //вывод громкости
      }
      else { //ударные
          convert_to_sequence_percussion(v_instruments, v_duration);
-         show_notes(converted_notes_sequence); //вывод нот с делением на строки длиной 256 символов
+         // show_notes(converted_notes_sequence); //вывод нот с делением на строки длиной 256 символов
          show_instruments();
          show_volumes(); //вывод громкости
      }
@@ -770,20 +709,20 @@ void MainWindow::setupUi()
     commonFont.setPointSize(9);
 
     //---------- First column
-    m_labelPartySelection = new QLabel(tr("Party selection"));
+    m_labelPartySelection = new QLabel(tr("Part selection"));
     m_labelPartySelection->setFixedHeight(25);
     m_labelPartySelection->setFont(commonFont);
 
-    m_comboPartySelection = new QComboBox;
-    m_comboPartySelection->setFixedHeight(25);
-    m_comboPartySelection->setFont(commonFont);
+    m_comboPartSelection = new QComboBox;
+    m_comboPartSelection->setFixedHeight(25);
+    m_comboPartSelection->setFont(commonFont);
 
     m_checkVolumeString = new QCheckBox(tr("Volume line"));
     m_checkVolumeString->setFixedHeight(25);
     m_checkVolumeString->setFont(commonFont);
 
     m_partColumn->addWidget(m_labelPartySelection);
-    m_partColumn->addWidget(m_comboPartySelection);
+    m_partColumn->addWidget(m_comboPartSelection);
     m_partColumn->addWidget(m_checkVolumeString);
     m_partColumn->addStretch();
 
@@ -882,6 +821,10 @@ void MainWindow::setupUi()
     m_versionMenu = new QMenu(tr("Version"), this);
     m_oldVersionTranslateAction = new QAction(tr("Before 2.4 (deprecated)"), this);
     m_newVersionTranslateAction = new QAction(tr("After 2.4 (including)"), this);
+
+    m_newVersionTranslateAction->setCheckable(true);
+    m_oldVersionTranslateAction->setCheckable(true);
+
     QActionGroup *versionGroup = new QActionGroup(this);
     versionGroup->setExclusive(true);
     versionGroup->addAction(m_oldVersionTranslateAction);
@@ -921,28 +864,49 @@ void MainWindow::setupUi()
     connect(m_languageGroup, &QActionGroup::triggered, this, &MainWindow::slotChangeLanguage);
     connect(m_consoleAction, &QAction::triggered, this, &MainWindow::slotOpenMenuConsole);
 
-    m_newVersionTranslateAction->setCheckable(true);
-    m_oldVersionTranslateAction->setCheckable(true);
     //Выбор версии перевода. Взаимоисключающий выбор
-    connect(m_newVersionTranslateAction, &QAction::triggered, this, &MainWindow::slotChangedVersion);
-    connect(m_oldVersionTranslateAction, &QAction::triggered, this, &MainWindow::slotChangedVersion);
+    connect(m_newVersionTranslateAction, &QAction::toggled, this, &MainWindow::slotChangedVersion);
+    connect(m_oldVersionTranslateAction, &QAction::toggled, this, &MainWindow::slotChangedVersion);
+
+    m_newVersionTranslateAction->blockSignals(true);
+    m_oldVersionTranslateAction->blockSignals(true);
 
     m_newVersionTranslateAction->setChecked(true); //По умолчанию перевод на новую версию
     m_oldVersionTranslateAction->setChecked(false);
-    slotChangedVersion();
+
+    m_newVersionTranslateAction->blockSignals(false);
+    m_oldVersionTranslateAction->blockSignals(false);
+
+    initializeConsole();//Загружаем консоль
+    //Инициализируем класс для открытия xml файлов и перевода
+    m_xmlReader = new MusicXmlReader(this, *sout);
+    m_musicTranslator = new TranslateMusic(*sout);
+
+    slotChangedVersion(false);
 
     //Подключения Action в Справка
     connect(m_helpAction, &QAction::triggered, this, &MainWindow::slotOpenManual);
     connect(m_aboutApplicationAction, &QAction::triggered, this, &MainWindow::slotAboutApplication);
     connect(m_aboutQtAction, &QAction::triggered, this, &MainWindow::slotOpenAboutQT);
     //Подключение QCheckBox
-    connect(m_checkVolumeString, &QCheckBox::toggled, this, &MainWindow::slotDisplayVolumeString);
-    connect(m_checkInstrumentString, &QCheckBox::toggled, this, &MainWindow::slotDisplayInstrumentString);
+    connect(m_checkVolumeString, &QCheckBox::toggled, this, &MainWindow::tryTranslate);
+    connect(m_checkInstrumentString, &QCheckBox::toggled, this, &MainWindow::tryTranslate);
 
     //Смена партии, голоса и инструмента
-    connect(m_comboPartySelection, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::slotComboBoxPartsIndexChanged);
-    connect(m_comboVoiceSelection, QOverload<const QString &>::of(&QComboBox::currentIndexChanged), this, &MainWindow::slotComboBoxVoicesIndexChanged);
-    connect(m_comboInstrumentSelection, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::slotComboBoxInstrumentsIndexChanged);
+    connect(m_comboPartSelection, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](){
+        auto part = m_comboPartSelection->currentData().toString();
+        if(!m_xmlReader->parseVoices(part)){
+            QMessageBox::critical(this, tr("Error"), tr("There are no voices in the part"));
+            return;
+        }
+        fillComboBoxVoices();
+        tryTranslate();
+    });
+    connect(m_comboVoiceSelection, QOverload<const QString &>::of(&QComboBox::currentIndexChanged), this, &MainWindow::tryTranslate);
+    connect(m_comboInstrumentSelection, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::tryTranslate);
+
+    //Подписываемся на результат перевода
+    connect(m_musicTranslator, &TranslateMusic::signalSendTranslation, this, &MainWindow::slotGetTranslation);
 }
 
 void MainWindow::convertToSequence(QVector<int>& converted, QVector<float>& duration, QVector<int>& league, NoteType type)
@@ -1109,7 +1073,7 @@ void MainWindow::loadSettings(QSettings &settings)
     m_comboInstrumentSelection->blockSignals(false);
 
     //Временно отключаем виджеты до открытия файла
-    m_comboPartySelection->setEnabled(false);
+    m_comboPartSelection->setEnabled(false);
     m_comboVoiceSelection->setEnabled(false);
     m_checkVolumeString->setEnabled(false);
     m_checkInstrumentString->setEnabled(false);
@@ -1168,11 +1132,13 @@ void MainWindow::updateInstrumentsComboBox()
     //Если новая версия, то добавляем последний инструмент
     if(m_newVersionTranslateAction->isChecked()){
         m_comboInstrumentSelection->addItem(instrumentsList.last(),Instrument::Bass);
-        m_instrOctRangeCurrent = m_instrOctRangeNew; //заменяем map новыми инструментами
+        m_musicTranslator->setCurrentOctaveRange(m_instrOctRangeNew);//заменяем map новыми инструментами
+        //to do заменить сигналом при смене в Ui
+        //m_instrOctRangeCurrent = m_instrOctRangeNew;
     }
     else if(m_oldVersionTranslateAction->isChecked()){
         m_comboInstrumentSelection->setItemText(0, tr("1. Bell (The first octave is broken, see manual)"));
-        m_instrOctRangeCurrent = m_instrOctRangeOld;
+        m_musicTranslator->setCurrentOctaveRange(m_instrOctRangeOld);//заменяем map новыми инструментами
     }
     //Выбираем изначальный инструмент, иначе фортепиано по умолчанию
     int index = m_comboInstrumentSelection->findData(currentData);
@@ -1186,10 +1152,52 @@ void MainWindow::updateInstrumentsComboBox()
     m_comboInstrumentSelection->blockSignals(false);
 }
 
+void MainWindow::fillComboBoxParties()
+{
+    m_comboPartSelection->setEnabled(true);
+    m_comboPartSelection->blockSignals(true);
+
+    for(auto & part : m_xmlReader->getMusicalParts())
+        m_comboPartSelection->addItem(part.id + " " + part.name, part.id);
+
+    if(m_comboPartSelection->count() > 0)
+        m_comboPartSelection->setCurrentIndex(0);
+
+    m_comboPartSelection->blockSignals(false);
+}
+
+void MainWindow::fillComboBoxVoices()
+{
+    m_comboVoiceSelection->setEnabled(true);
+    auto currentPart = m_comboPartSelection->currentData().toString();
+    m_comboVoiceSelection->blockSignals(true);
+    m_comboVoiceSelection->clear();
+    for (auto & voice : m_xmlReader->getVoicesFromPart(currentPart))
+        m_comboVoiceSelection->addItem(voice);
+
+    if(m_comboVoiceSelection->count() > 0)
+        m_comboVoiceSelection->setCurrentIndex(0);
+
+    m_comboVoiceSelection->blockSignals(false);
+}
+
+void MainWindow::tryTranslate()
+{
+    if(m_comboPartSelection->currentIndex() < 0)
+        return;
+    if(m_comboVoiceSelection->currentIndex() < 0)
+        return;
+    if(m_comboInstrumentSelection->currentIndex() < 0)
+        return;
+    m_musicTranslator->parsingData(m_comboPartSelection->currentData().toString(),
+                             m_comboVoiceSelection->currentText(),
+                             m_comboInstrumentSelection->currentData().toInt(),
+                             m_xmlReader->getDoc());
+}
+
 void MainWindow::initializeSettings()
 {
     setWindowTitle(tr("Survivalcraft notes translator:"));//Задаём название приложения
-    initializeConsole();//Загружаем консоль
     QSettings settings("config.ini", QSettings::IniFormat); //Открываем ini файл
     resetDefaultSettings(settings);
     loadSettings(settings);
@@ -1238,10 +1246,22 @@ void MainWindow::loadHelpLibrary()
     QDir::setCurrent(oldPath); // восстановление рабочей директории
 }
 
-void MainWindow::show_notes(QVector<int> &converted_notes)
+void MainWindow::showTranslation()
 {
-    *sout << "Ноты " << IdParts[m_comboPartySelection->currentIndex()].toStdString() << " " << m_comboVoiceSelection->currentText().toStdString() << endl;
-    m_translatedArea->append(tr("Notes ") + IdParts[m_comboPartySelection->currentIndex()]+ "," + m_comboVoiceSelection->currentText() + "\n");
+    m_translatedArea->clear();
+    show_notes();
+    show_octaves();
+    show_instruments();
+    show_volumes();
+}
+
+void MainWindow::show_notes()
+{
+    *sout << "Ноты " << m_comboPartSelection->currentData().toString().toStdString() + ","
+                            + m_comboVoiceSelection->currentText().toStdString() + "\n";
+
+    m_translatedArea->append(tr("Notes ") + m_comboPartSelection->currentData().toString() + ","
+                             + m_comboVoiceSelection->currentText() + "\n");
 
     int count = 0;
     for (int& i : converted_notes_sequence) {
@@ -1269,10 +1289,16 @@ void MainWindow::show_notes(QVector<int> &converted_notes)
 
 }
 
-void MainWindow::show_octaves(QVector<int> &converted_octaves)
+void MainWindow::show_octaves()
 {
-    *sout << "Октавы " << IdParts[m_comboPartySelection->currentIndex()].toStdString() << " " << m_comboVoiceSelection->currentText().toStdString() << endl;
-    m_translatedArea->append(tr("Octaves ") + IdParts[m_comboPartySelection->currentIndex()]+ "," + m_comboVoiceSelection->currentText() + "\n");
+    //Если ударные, то выходим
+    if(converted_octaves_sequence.isEmpty())
+        return;
+
+    *sout << "Октавы " << m_comboPartSelection->currentData().toString().toStdString() + ","
+                 + m_comboVoiceSelection->currentText().toStdString() + "\n";
+    m_translatedArea->append(tr("Octaves ") + m_comboPartSelection->currentData().toString() + ","
+                             + m_comboVoiceSelection->currentText() + "\n");
 
     int count = 0;
     for (int& i : converted_octaves_sequence) {
@@ -1315,8 +1341,10 @@ void MainWindow::convert_to_sequence_percussion(QVector<string> &, QVector<float
 void MainWindow::show_instruments()
 {
     if(m_checkInstrumentString->isChecked()){
-        *sout << "Инструменты " << IdParts[m_comboPartySelection->currentIndex()].toStdString() << " " << m_comboVoiceSelection->currentText().toStdString() << endl;
-        m_translatedArea->append(tr("Instruments ") + IdParts[m_comboPartySelection->currentIndex()]+ "," + m_comboVoiceSelection->currentText() + "\n");
+        *sout << "Инструменты " << m_comboPartSelection->currentData().toString().toStdString() + ","
+                                       + m_comboVoiceSelection->currentText().toStdString() + "\n";
+        m_translatedArea->append(tr("Instruments ") + m_comboPartSelection->currentData().toString() + ","
+                                 + m_comboVoiceSelection->currentText() + "\n");
 
         int count = 0;
         for (int& i : converted_notes_sequence) {
@@ -1346,8 +1374,10 @@ void MainWindow::show_instruments()
 void MainWindow::show_volumes()
 {
     if(m_checkVolumeString->isChecked()){ //если выбрано вывод строки инструментов
-        *sout << "Громкость " << IdParts[m_comboPartySelection->currentIndex()].toStdString() << " " << m_comboVoiceSelection->currentText().toStdString() << endl;
-        m_translatedArea->append(tr("Volume ") + IdParts[m_comboPartySelection->currentIndex()]+ "," + m_comboVoiceSelection->currentText() + "\n");
+        *sout << "Громкость " << m_comboPartSelection->currentData().toString().toStdString() + ","
+                                     + m_comboVoiceSelection->currentText().toStdString() + "\n";
+        m_translatedArea->append(tr("Volume ") + m_comboPartSelection->currentData().toString() + ","
+                                 + m_comboVoiceSelection->currentText() + "\n");
 
         int count = 0;
         for (int& i : converted_notes_sequence) {
@@ -1376,7 +1406,7 @@ void MainWindow::show_volumes()
 
 void MainWindow::slotDisplayInstrumentString(int arg1)
 {
-    slotComboBoxPartsIndexChanged(m_comboPartySelection->currentIndex());
+    slotComboBoxPartsIndexChanged(m_comboPartSelection->currentIndex());
 }
 
 void MainWindow::slotAboutApplication()
@@ -1387,7 +1417,7 @@ void MainWindow::slotAboutApplication()
 
 void MainWindow::slotDisplayVolumeString(int arg1)
 {
-    slotComboBoxPartsIndexChanged(m_comboPartySelection->currentIndex());
+    slotComboBoxPartsIndexChanged(m_comboPartSelection->currentIndex());
 }
 
 void MainWindow::slotOpenManual() {
@@ -1430,8 +1460,11 @@ void MainWindow::slotChangeLanguage(QAction *action)
     emit signalChangeLanguage();
 }
 
-void MainWindow::slotChangedVersion()
+void MainWindow::slotChangedVersion(bool checked)
 {
+    if(!checked)
+        return;
+
     updateInstrumentsComboBox();
-    slotComboBoxPartsIndexChanged(m_comboPartySelection->currentIndex());
+    tryTranslate();
 }

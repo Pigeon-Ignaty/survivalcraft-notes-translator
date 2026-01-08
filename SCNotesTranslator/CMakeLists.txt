@@ -9,7 +9,7 @@ find_package(Qt5 COMPONENTS Core Gui Widgets WebEngineWidgets LinguistTools Test
 set(XML_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests/resources/xml)
 add_compile_definitions(XML_DIR="${XML_DIR}")
 
-option(BUILD_HELP_DLL "Build Help DLL" ON)
+option(BUILD_HELP_DLL "Build Help DLL" OFF)
 
 add_subdirectory(libs/miniz)
 if(BUILD_HELP_DLL)
@@ -19,6 +19,7 @@ endif()
 set(SOURCES
     src/about.cpp
     src/debug.cpp
+    src/MusicXmlReader.cpp
     src/mainwindow.cpp
     src/qtexteditstream.cpp
     libs/tiny/tinyxml2.cpp
@@ -27,6 +28,7 @@ set(SOURCES
 set(HEADERS
     src/about.h
     src/debug.h
+    src/MusicXmlReader.h
     src/mainwindow.h
     src/qtexteditstream.h
     libs/tiny/tinyxml2.h
@@ -57,6 +59,7 @@ add_library(SCNotesTranslatorLib STATIC
     ${HEADERS}
     ${UI_HEADERS}
     ${RESOURCES}
+    src/TranslateMusic.h src/TranslateMusic.cpp
 )
 
 target_include_directories(SCNotesTranslatorLib PUBLIC
