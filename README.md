@@ -150,7 +150,10 @@ In this section, all major changes, additions, and deletions in the code are rec
  	* Release of the first version of the application, 1.0.0.
 * 20th December 2025
 	* Application testing has been added. Unfortunately, it was not possible to use the built-in testing module due to its 5-minute time limit. Therefore, tests had to be written manually by interacting with the application’s slots. Since the translation logic is tied to the GUI and the entire process runs in the GUI thread, full testing takes about 30 minutes. In addition, the resulting output file is very large, the largest being around 12,000 lines. It is necessary to redesign the application architecture by separating the presentation layer (GUI) from the translation logic. The test itself includes opening a corrupted file and translating several works.
-   
+* 8th January 2026
+	* Work has begun on separating the reading, analysis of the XML file, translation, and display in the UI. A `MusicXmlReader` class has been added for reading and validating the file, as well as a `TranslateMusic` class for translating the music. Later, all unnecessary elements will be removed from MainWindow. Additionally, the issue [#2](https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/issues/2) has been fixed.
+
+ 
 ## Build Requirements
 
 To build the project from source, the following tools and libraries are required:
@@ -313,6 +316,9 @@ ___
  	* Выпуск первой версии приложения 1.0.0.
 * 20.12.25
 	* Добавлено тестирование приложения. К сожалению, не удалось воспользоваться встроенным модулем тестирования, так как в нём существует ограничение по времени выполнения (5 минут). Поэтому тесты пришлось писать вручную, путём взаимодействия со слотами приложения. Из-за того, что логика перевода связана с GUI и весь процесс выполняется в GUI-потоке, полное тестирование занимает около 30 минут. Кроме того, результирующий файл получается очень большим (самый крупный — около 12 тысяч строк). Необходимо переписать архитектуру приложения, разделив представление (GUI) и логику перевода. Сам тест включает в себя открытие повреждённого файла и перевод нескольких произведений.
+* 8.01.26
+	* Начата работа по отделению чтения, анализа XML-файла, перевода и отображения в UI. Был добавлен класс `MusicXmlReader` для чтения и проверки файла, а также класс `TranslateMusic` для перевода музыки. Чуть позже будет убрано всё лишнее из MainWindow. Дополнительно была исправлена ошибка [#2](https://github.com/Pigeon-Ignaty/survivalcraft-notes-translator/issues/2).
+
 ---
 ## Требования для сборки проекта
 
