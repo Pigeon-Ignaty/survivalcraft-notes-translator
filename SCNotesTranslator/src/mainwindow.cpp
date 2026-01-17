@@ -868,14 +868,8 @@ void MainWindow::setupUi()
     connect(m_newVersionTranslateAction, &QAction::toggled, this, &MainWindow::slotChangedVersion);
     connect(m_oldVersionTranslateAction, &QAction::toggled, this, &MainWindow::slotChangedVersion);
 
-    m_newVersionTranslateAction->blockSignals(true);
-    m_oldVersionTranslateAction->blockSignals(true);
-
     m_newVersionTranslateAction->setChecked(true); //По умолчанию перевод на новую версию
     m_oldVersionTranslateAction->setChecked(false);
-
-    m_newVersionTranslateAction->blockSignals(false);
-    m_oldVersionTranslateAction->blockSignals(false);
 
     initializeConsole();//Загружаем консоль
     //Инициализируем класс для открытия xml файлов и перевода
@@ -1037,10 +1031,11 @@ void MainWindow::loadSettings(QSettings &settings)
     int versionTranslate = settings.value("App/Version").toInt();
     for(auto action : m_versionMenu->actions()){
         if(action->data().toInt() == versionTranslate){
-            action->setChecked(true);
+            action->trigger();
             break;
         }
     }
+
     //Язык
     QString localeName = settings.value("App/Language").toString();
     //m_languageGroup->blockSignals(true);
@@ -1109,6 +1104,8 @@ void MainWindow::saveSettings(QSettings &settings)
 
 void MainWindow::updateInstrumentsComboBox()
 {
+    if(!m_musicTranslator)
+        return;
     m_comboInstrumentSelection->blockSignals(true);
     //Получаем текущий выбранный инструмент
     int currentData = m_comboInstrumentSelection->currentData().toInt();
@@ -1464,7 +1461,6 @@ void MainWindow::slotChangedVersion(bool checked)
 {
     if(!checked)
         return;
-
     updateInstrumentsComboBox();
     tryTranslate();
 }

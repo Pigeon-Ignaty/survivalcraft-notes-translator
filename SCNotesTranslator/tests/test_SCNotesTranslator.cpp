@@ -88,7 +88,12 @@ bool Test_SCNotesTranslator::testCheckTranslation()
                                                    {"Drums", ".mxl"},
                                                    {"AllNotes_test", ".musicxml"},
                                                    {"voices", ".musicxml"},
-                                                   {"SUBWAY SURFERS (Main Theme)", ".musicxml"}};
+                                                   {"SUBWAY SURFERS (Main Theme)", ".musicxml"},
+                                                    {"Bad_Piggies_Theme",".musicxml"},
+                                                    {"Drums", ".mxl"},
+                                                    {"AllNotes_test", ".musicxml"},
+                                                    {"voices", ".musicxml"},
+                                                    {"SUBWAY SURFERS (Main Theme)", ".musicxml"}};
     bool translationPassed = true;
     for(const auto &file : musicFiles){
         m_testApp->slotOpenFile(QString("%1/%2").arg(XML_DIR).arg(file.first + file.second));
@@ -176,7 +181,8 @@ bool Test_SCNotesTranslator::translateFile(QString fileName)
     };
     allData.append("СТАРАЯ ВЕРСИЯ\n");
     qDebug() << "СТАРАЯ ВЕРСИЯ";
-
+    m_testApp->m_newVersionTranslateAction->setChecked(false);
+    m_testApp->m_oldVersionTranslateAction->trigger();
     translate();
 
     allData.append("НОВАЯ ВЕРСИЯ\n");
